@@ -38,7 +38,7 @@ import trclib.timer.TrcTimer;
 /**
  * This class contains the TeleOp Mode program.
  */
-@TeleOp(name="FtcTeleOp", group="Ftcxxxx")
+@TeleOp(name="FtcTeleOp", group="Ftc4227")
 public class FtcTeleOp extends FtcOpMode
 {
     private final String moduleName = getClass().getSimpleName();
@@ -167,6 +167,8 @@ public class FtcTeleOp extends FtcOpMode
     {
         if (slowPeriodicLoop)
         {
+            robot.arm.setMotorPower(-0.5*operatorGamepad.getLeftStickY(false));
+
             //
             // DriveBase subsystem.
             //
@@ -287,7 +289,23 @@ public class FtcTeleOp extends FtcOpMode
                 break;
 
             case B:
+                if(pressed){
+                    robot.robotDrive.driveBase.arcadeDrive(0,1);
+                }
+                else{
+                    robot.robotDrive.driveBase.arcadeDrive(0,0);
+
+                }
+                break;
             case X:
+                if(pressed){
+                    robot.robotDrive.driveBase.arcadeDrive(0,-1);
+                }
+                else{
+                    robot.robotDrive.driveBase.arcadeDrive(0,0);
+
+                }
+                break;
             case Y:
                 break;
 
@@ -372,9 +390,32 @@ public class FtcTeleOp extends FtcOpMode
         switch (button)
         {
             case A:
+                if(pressed){
+                    robot.arm.setMotorPower(0.5);
+                }
+                else{
+                    robot.arm.setMotorPower(0);
+                }
+                break;
             case B:
+                if(pressed){
+                    robot.Lclaw.setLogicalPosition(1);
+                    robot.Rclaw.setLogicalPosition(0);
+                }
+                break;
             case X:
+                if(pressed){
+                    robot.Lclaw.setLogicalPosition(0);
+                    robot.Rclaw.setLogicalPosition(1);
+                }
+                break;
             case Y:
+                if(pressed){
+                    robot.arm.setMotorPower(-0.5);
+                }
+                else{
+                    robot.arm.setMotorPower(0);
+                }
                 break;
 
             case LeftBumper:

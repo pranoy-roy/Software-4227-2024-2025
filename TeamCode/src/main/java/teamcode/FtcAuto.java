@@ -33,6 +33,7 @@ import ftclib.driverio.FtcMatchInfo;
 import ftclib.driverio.FtcMenu;
 import ftclib.driverio.FtcValueMenu;
 import ftclib.robotcore.FtcOpMode;
+import teamcode.autocommands.AUTOV1;
 import trclib.command.CmdPidDrive;
 import trclib.command.CmdTimedDrive;
 import trclib.pathdrive.TrcPose2D;
@@ -62,6 +63,7 @@ public class FtcAuto extends FtcOpMode
 
     public enum AutoStrategy
     {
+        AUTOV1,
         PID_DRIVE,
         TIMED_DRIVE,
         DO_NOTHING
@@ -155,7 +157,9 @@ public class FtcAuto extends FtcOpMode
                         0.0, autoChoices.drivePower, 0.0);
                 }
                 break;
-
+            case AUTOV1:
+                autoCommand = new AUTOV1(robot, autoChoices);
+                break;
             case DO_NOTHING:
             default:
                 autoCommand = null;
@@ -242,6 +246,8 @@ public class FtcAuto extends FtcOpMode
         }
     }   //startMode
 
+
+
     /**
      * This method is called when competition mode is about to end. Typically, you put code that will do clean
      * up here such as disabling the sampling of some sensors.
@@ -308,6 +314,7 @@ public class FtcAuto extends FtcOpMode
         //
         // Construct menus.
         //
+
         FtcValueMenu delayMenu = new FtcValueMenu("Delay time:", null, 0.0, 30.0, 1.0, 0.0, " %.0f sec");
         FtcChoiceMenu<Alliance> allianceMenu = new FtcChoiceMenu<>("Alliance:", delayMenu);
         FtcChoiceMenu<StartPos> startPosMenu = new FtcChoiceMenu<>("Start Position:", allianceMenu);
@@ -340,6 +347,8 @@ public class FtcAuto extends FtcOpMode
         startPosMenu.addChoice("Start Position Right", StartPos.RIGHT, false, strategyMenu);
 
         strategyMenu.addChoice("PID Drive", AutoStrategy.PID_DRIVE, false, xTargetMenu);
+        strategyMenu.addChoice("AUTO V1", AutoStrategy.AUTOV1, false);
+
         strategyMenu.addChoice("Timed Drive", AutoStrategy.TIMED_DRIVE, false, driveTimeMenu);
         strategyMenu.addChoice("Do nothing", AutoStrategy.DO_NOTHING, true);
         //

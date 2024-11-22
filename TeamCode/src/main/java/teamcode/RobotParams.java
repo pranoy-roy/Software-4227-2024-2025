@@ -107,12 +107,399 @@ public class RobotParams
         public static final double ROBOT_LENGTH                 = 17.0;
         public static final double ROBOT_WIDTH                  = 17.0;
         // Robot Drive Parameters.
-        public static final DriveMode DRIVE_MODE                = DriveMode.ArcadeMode;
+        public static final DriveMode DRIVE_MODE                = DriveMode.HolonomicMode;
         public static final DriveOrientation DRIVE_ORIENTATION  = DriveOrientation.ROBOT;
         public static final double DRIVE_SLOW_SCALE             = 0.3;
         public static final double DRIVE_NORMAL_SCALE           = 1.0;
-        public static final double TURN_SLOW_SCALE              = 0.3;
-        public static final double TURN_NORMAL_SCALE            = 0.6;
+        public static final double TURN_SLOW_SCALE              = -0.3;
+        public static final double TURN_NORMAL_SCALE            = -
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                0.6;
     }   //class Robot
 
     /**
@@ -138,6 +525,8 @@ public class RobotParams
      * subsystems, one can test the rest of the robot without the fear of code crashing when some subsystems are not
      * found.
      */
+
+
     public static class Preferences
     {
         // Global config
@@ -163,11 +552,11 @@ public class RobotParams
         public static final boolean showVisionView              = !inCompetition;
         public static final boolean showVisionStat              = false;
         // Drive Base
-        public static final boolean useDriveBase                = false;
+        public static final boolean useDriveBase                = true;
         public static final boolean usePinpointOdometry         = false;
         public static final boolean useSparkfunOTOS             = false;
         // Subsystems
-        public static final boolean useSubsystems               = false;
+        public static final boolean useSubsystems               = true;
     }   //class Preferences
 
     //
@@ -397,7 +786,7 @@ public class RobotParams
             driveMotorType = MotorType.DcMotor;
             driveMotorNames = new String[] {"lfDriveMotor", "rfDriveMotor", "lbDriveMotor", "rbDriveMotor"};
             driveMotorInverted = new boolean[] {true, false, true, false};
-            odometryType = TrcDriveBase.OdometryType.AbsoluteOdometry;
+            odometryType = TrcDriveBase.OdometryType.MotorOdometry;
             // Odometry Wheels
             odWheelXScale = odWheelYScale = Math.PI * ODWHEEL_DIAMETER / ODWHEEL_CPR;
             xOdWheelSensorNames = new String[] {"xOdWheelSensor"};

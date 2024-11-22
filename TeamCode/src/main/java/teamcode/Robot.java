@@ -27,6 +27,8 @@ import androidx.annotation.NonNull;
 import ftclib.drivebase.FtcRobotDrive;
 import ftclib.driverio.FtcDashboard;
 import ftclib.driverio.FtcMatchInfo;
+import ftclib.motor.FtcDcMotor;
+import ftclib.motor.FtcServo;
 import ftclib.robotcore.FtcOpMode;
 import ftclib.sensor.FtcRobotBattery;
 import teamcode.subsystems.LEDIndicator;
@@ -61,8 +63,12 @@ public class Robot
     // Sensors and indicators.
     public LEDIndicator ledIndicator;
     public FtcRobotBattery battery;
-    // Subsystems.
+    // Subsystems
+    public FtcDcMotor arm;
 
+    public FtcServo Lclaw;
+
+    public FtcServo Rclaw;
     /**
      * Constructor: Create an instance of the object.
      *
@@ -109,6 +115,9 @@ public class Robot
             //
             if (RobotParams.Preferences.useSubsystems)
             {
+                arm = new FtcDcMotor("arm");
+                Lclaw = new FtcServo("Lclaw");
+                Rclaw = new FtcServo("Rclaw");
             }
         }
 
