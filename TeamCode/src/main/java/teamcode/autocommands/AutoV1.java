@@ -133,7 +133,7 @@ public class AutoV1 implements TrcRobot.RobotCommand
                     //TrcPose2D point = new TrcPose2D(0,0,0);
                     //TrcPose2D point1 = new TrcPose2D(0,3,0);
 
-                    robot.robotDrive.driveBase.holonomicDrive(0.0, 0.5, 0.0, 2.0, event);
+                    robot.robotDrive.driveBase.holonomicDrive(0.0, 0.5, 0.0, 1.0, event);
 
                     robot.arm.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -144,7 +144,7 @@ public class AutoV1 implements TrcRobot.RobotCommand
                     robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     robot.arm.setMotorPower(0.5);
 
-                    robot.arm.motor.setTargetPosition(85);
+                    robot.arm.motor.setTargetPosition(95);
                     robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     robot.arm.setMotorPower(0.5);
 
@@ -155,8 +155,8 @@ public class AutoV1 implements TrcRobot.RobotCommand
                     robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     robot.arm.setMotorPower(0.5);
 
-                    robot.robotDrive.driveBase.holonomicDrive(0.0, -0.5, 0.0, 2.0, event);
-                    robot.robotDrive.driveBase.holonomicDrive(0.5, 0.0, 0.0, 3.0, event);
+                    robot.robotDrive.driveBase.holonomicDrive(0.0, -0.5, 0.0, 1.0, event);
+                    robot.robotDrive.driveBase.holonomicDrive(0.5, 0.0, 0.0, 2.0, event);
 
                     //robot.robotDrive.purePursuitDrive.start(event, 10, point, false, point1);
                     sm.waitForSingleEvent(event, State.DONE);
