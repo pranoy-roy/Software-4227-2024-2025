@@ -26,8 +26,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import teamcode.FtcAuto;
 import teamcode.Robot;
-import trclib.dataprocessor.TrcUtil;
-import trclib.pathdrive.TrcPose2D;
 import trclib.robotcore.TrcEvent;
 import trclib.robotcore.TrcRobot;
 import trclib.robotcore.TrcStateMachine;
@@ -36,7 +34,7 @@ import trclib.timer.TrcTimer;
 /**
  * This class implements an autonomous strategy.
  */
-public class AUTOV1 implements TrcRobot.RobotCommand
+public class AutoV1 implements TrcRobot.RobotCommand
 {
     private final String moduleName = getClass().getSimpleName();
 
@@ -59,7 +57,7 @@ public class AUTOV1 implements TrcRobot.RobotCommand
      * @param robot specifies the robot object for providing access to various global objects.
      * @param autoChoices specifies the autoChoices object.
      */
-    public AUTOV1(Robot robot, FtcAuto.AutoChoices autoChoices)
+    public AutoV1(Robot robot, FtcAuto.AutoChoices autoChoices)
     {
         this.robot = robot;
         this.autoChoices = autoChoices;

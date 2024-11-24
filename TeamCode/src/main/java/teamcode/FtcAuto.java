@@ -33,7 +33,7 @@ import ftclib.driverio.FtcMatchInfo;
 import ftclib.driverio.FtcMenu;
 import ftclib.driverio.FtcValueMenu;
 import ftclib.robotcore.FtcOpMode;
-import teamcode.autocommands.AUTOV1;
+import teamcode.autocommands.AutoV1;
 import trclib.command.CmdPidDrive;
 import trclib.command.CmdTimedDrive;
 import trclib.pathdrive.TrcPose2D;
@@ -158,7 +158,7 @@ public class FtcAuto extends FtcOpMode
                 }
                 break;
             case AUTOV1:
-                autoCommand = new AUTOV1(robot, autoChoices);
+                autoCommand = new AutoV1(robot, autoChoices);
                 break;
             case DO_NOTHING:
             default:
