@@ -24,6 +24,8 @@ package teamcode;
 
 import androidx.annotation.NonNull;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+
 import ftclib.drivebase.FtcRobotDrive;
 import ftclib.driverio.FtcDashboard;
 import ftclib.driverio.FtcMatchInfo;
@@ -58,6 +60,7 @@ public class Robot
     // Robot Drive.
     public FtcRobotDrive.RobotInfo robotInfo;
     public FtcRobotDrive robotDrive;
+
     // Vision subsystems.
     public Vision vision;
     // Sensors and indicators.
@@ -65,9 +68,7 @@ public class Robot
     public FtcRobotBattery battery;
     // Subsystems
     public FtcDcMotor arm;
-
     public FtcServo Lclaw;
-
     public FtcServo Rclaw;
     /**
      * Constructor: Create an instance of the object.

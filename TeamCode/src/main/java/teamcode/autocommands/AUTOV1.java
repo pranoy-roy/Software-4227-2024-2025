@@ -22,8 +22,11 @@
 
 package teamcode.autocommands;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+
 import teamcode.FtcAuto;
 import teamcode.Robot;
+import trclib.dataprocessor.TrcUtil;
 import trclib.pathdrive.TrcPose2D;
 import trclib.robotcore.TrcEvent;
 import trclib.robotcore.TrcRobot;
@@ -129,10 +132,35 @@ public class AUTOV1 implements TrcRobot.RobotCommand
                 default:
 
                 case MOVE:
-                    TrcPose2D point = new TrcPose2D(0,0,0);
-                    TrcPose2D point1 = new TrcPose2D(0,3,0);
+                    //TrcPose2D point = new TrcPose2D(0,0,0);
+                    //TrcPose2D point1 = new TrcPose2D(0,3,0);
 
-                    robot.robotDrive.purePursuitDrive.start(event, 10, point, false, point1);
+                    robot.robotDrive.driveBase.holonomicDrive(null,0.0, 0.5, 0.0,false, 0.0, 2.0, null);
+
+                    robot.arm.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+                    robot.arm.motor.setTargetPosition(0);
+                    robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    robot.arm.motor.setTargetPosition(75);
+                    robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.arm.setMotorPower(0.5);
+
+                    robot.arm.motor.setTargetPosition(85);
+                    robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.arm.setMotorPower(0.5);
+
+                    robot.Lclaw.setLogicalPosition(0);
+                    robot.Rclaw.setLogicalPosition(1);
+
+                    robot.arm.motor.setTargetPosition(0);
+                    robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.arm.setMotorPower(0.5);
+
+                    robot.robotDrive.driveBase.holonomicDrive(null,0.0, -0.5, 0.0,false, 0.0, 2.0, null);
+                    robot.robotDrive.driveBase.holonomicDrive(null,0.5, 0.0, 0.0,false, 0.0, 3.0, null);
+
+                    //robot.robotDrive.purePursuitDrive.start(event, 10, point, false, point1);
                     sm.waitForSingleEvent(event, State.DONE);
                     break;
 
