@@ -33,7 +33,7 @@ import ftclib.driverio.FtcMatchInfo;
 import ftclib.driverio.FtcMenu;
 import ftclib.driverio.FtcValueMenu;
 import ftclib.robotcore.FtcOpMode;
-import teamcode.autocommands.AutoV1;
+import teamcode.Autocommands.AutoV1;
 import trclib.command.CmdPidDrive;
 import trclib.command.CmdTimedDrive;
 import trclib.pathdrive.TrcPose2D;
@@ -63,14 +63,14 @@ public class FtcAuto extends FtcOpMode
 
     public enum AutoStrategy
     {
-        AUTOV1,
+        AutoV1,
         PID_DRIVE,
         TIMED_DRIVE,
         DO_NOTHING
     }   //enum AutoStrategy
 
     /**
-     * This class stores the autonomous menu choices.
+     * This class stores the Autonomous menu choices.
      */
     public static class AutoChoices
     {
@@ -104,9 +104,9 @@ public class FtcAuto extends FtcOpMode
 
     }   //class AutoChoices
 
-    public static final AutoChoices autoChoices = new AutoChoices();
+    public static final AutoChoices AutoChoices = new AutoChoices();
     private Robot robot;
-    private TrcRobot.RobotCommand autoCommand;
+    private TrcRobot.RobotCommand AutoCommand;
 
     //
     // Implements FtcOpMode abstract method.
@@ -138,31 +138,31 @@ public class FtcAuto extends FtcOpMode
         //
         doAutoChoicesMenus();
         //
-        // Create autonomous command according to chosen strategy.
+        // Create Autonomous command according to chosen strategy.
         //
-        switch (autoChoices.strategy)
+        switch (AutoChoices.strategy)
         {
             case PID_DRIVE:
                 if (robot.robotDrive != null)
                 {
-                    autoCommand = new CmdPidDrive(robot.robotDrive.driveBase, robot.robotDrive.pidDrive);
+                    AutoCommand = new CmdPidDrive(robot.robotDrive.driveBase, robot.robotDrive.pidDrive);
                 }
                 break;
 
             case TIMED_DRIVE:
                 if (robot.robotDrive != null)
                 {
-                    autoCommand = new CmdTimedDrive(
-                        robot.robotDrive.driveBase, autoChoices.delay, autoChoices.driveTime,
-                        0.0, autoChoices.drivePower, 0.0);
+                    AutoCommand = new CmdTimedDrive(
+                        robot.robotDrive.driveBase, AutoChoices.delay, AutoChoices.driveTime,
+                        0.0, AutoChoices.drivePower, 0.0);
                 }
                 break;
-            case AUTOV1:
-                autoCommand = new AutoV1(robot, autoChoices);
+            case AutoV1:
+                AutoCommand = new AutoV1(robot, AutoChoices);
                 break;
             case DO_NOTHING:
             default:
-                autoCommand = null;
+                AutoCommand = null;
                 break;
         }
 
@@ -198,7 +198,7 @@ public class FtcAuto extends FtcOpMode
 
     /**
      * This method is called periodically after robotInit() is called but before competition starts. For example,
-     * we can put vision code here to detect target before autonomous starts.
+     * we can put vision code here to detect target before Autonomous starts.
      */
     @Override
     public void initPeriodic()
@@ -221,12 +221,12 @@ public class FtcAuto extends FtcOpMode
             TrcDbgTrace.setTraceLogEnabled(true);
         }
         robot.globalTracer.traceInfo(
-            moduleName, "***** Starting autonomous: " + TrcTimer.getCurrentTimeString() + " *****");
+            moduleName, "***** Starting Autonomous: " + TrcTimer.getCurrentTimeString() + " *****");
         if (Robot.matchInfo != null)
         {
             robot.globalTracer.logInfo(moduleName, "MatchInfo", Robot.matchInfo.toString());
         }
-        robot.globalTracer.logInfo(moduleName, "AutoChoices", autoChoices.toString());
+        robot.globalTracer.logInfo(moduleName, "AutoChoices", AutoChoices.toString());
         robot.dashboard.clearDisplay();
         //
         // Tell robot object opmode is about to start so it can do the necessary start initialization for the mode.
@@ -238,11 +238,11 @@ public class FtcAuto extends FtcOpMode
             robot.battery.setEnabled(true);
         }
 
-        if (autoChoices.strategy == AutoStrategy.PID_DRIVE && autoCommand != null)
+        if (AutoChoices.strategy == AutoStrategy.PID_DRIVE && AutoCommand != null)
         {
-            ((CmdPidDrive) autoCommand).start(
-                autoChoices.delay, autoChoices.drivePower, null,
-                new TrcPose2D(autoChoices.xTarget*12.0, autoChoices.yTarget*12.0, autoChoices.turnTarget));
+            ((CmdPidDrive) AutoCommand).start(
+                AutoChoices.delay, AutoChoices.drivePower, null,
+                new TrcPose2D(AutoChoices.xTarget*12.0, AutoChoices.yTarget*12.0, AutoChoices.turnTarget));
         }
     }   //startMode
 
@@ -259,11 +259,11 @@ public class FtcAuto extends FtcOpMode
     public void stopMode(TrcRobot.RunMode prevMode, TrcRobot.RunMode nextMode)
     {
         //
-        // Opmode is about to stop, cancel autonomous command in progress if any.
+        // Opmode is about to stop, cancel Autonomous command in progress if any.
         //
-        if (autoCommand != null)
+        if (AutoCommand != null)
         {
-            autoCommand.cancel();
+            AutoCommand.cancel();
         }
         //
         // Tell robot object opmode is about to stop so it can do the necessary cleanup for the mode.
@@ -277,7 +277,7 @@ public class FtcAuto extends FtcOpMode
 
         printPerformanceMetrics();
         robot.globalTracer.traceInfo(
-            moduleName, "***** Stopping autonomous: " + TrcTimer.getCurrentTimeString() + " *****");
+            moduleName, "***** Stopping Autonomous: " + TrcTimer.getCurrentTimeString() + " *****");
 
         if (TrcDbgTrace.isTraceLogOpened())
         {
@@ -297,17 +297,17 @@ public class FtcAuto extends FtcOpMode
     @Override
     public void periodic(double elapsedTime, boolean slowPeriodicLoop)
     {
-        if (autoCommand != null)
+        if (AutoCommand != null)
         {
             //
-            // Run the autonomous command.
+            // Run the Autonomous command.
             //
-            autoCommand.cmdPeriodic(elapsedTime);
+            AutoCommand.cmdPeriodic(elapsedTime);
         }
     }   //periodic
 
     /**
-     * This method creates the autonomous menus, displays them and stores the choices.
+     * This method creates the Autonomous menus, displays them and stores the choices.
      */
     private void doAutoChoicesMenus()
     {
@@ -347,7 +347,7 @@ public class FtcAuto extends FtcOpMode
         startPosMenu.addChoice("Start Position Right", StartPos.RIGHT, false, strategyMenu);
 
         strategyMenu.addChoice("PID Drive", AutoStrategy.PID_DRIVE, false, xTargetMenu);
-        strategyMenu.addChoice("AUTO V1", AutoStrategy.AUTOV1, false);
+        strategyMenu.addChoice("Auto V1", AutoStrategy.AutoV1, false);
 
         strategyMenu.addChoice("Timed Drive", AutoStrategy.TIMED_DRIVE, false, driveTimeMenu);
         strategyMenu.addChoice("Do nothing", AutoStrategy.DO_NOTHING, true);
@@ -358,19 +358,19 @@ public class FtcAuto extends FtcOpMode
         //
         // Fetch choices.
         //
-        autoChoices.delay = delayMenu.getCurrentValue();
-        autoChoices.alliance = allianceMenu.getCurrentChoiceObject();
-        autoChoices.startPos = startPosMenu.getCurrentChoiceObject();
-        autoChoices.strategy = strategyMenu.getCurrentChoiceObject();
-        autoChoices.xTarget = xTargetMenu.getCurrentValue();
-        autoChoices.yTarget = yTargetMenu.getCurrentValue();
-        autoChoices.turnTarget = turnTargetMenu.getCurrentValue();
-        autoChoices.driveTime = driveTimeMenu.getCurrentValue();
-        autoChoices.drivePower = drivePowerMenu.getCurrentValue();
+        AutoChoices.delay = delayMenu.getCurrentValue();
+        AutoChoices.alliance = allianceMenu.getCurrentChoiceObject();
+        AutoChoices.startPos = startPosMenu.getCurrentChoiceObject();
+        AutoChoices.strategy = strategyMenu.getCurrentChoiceObject();
+        AutoChoices.xTarget = xTargetMenu.getCurrentValue();
+        AutoChoices.yTarget = yTargetMenu.getCurrentValue();
+        AutoChoices.turnTarget = turnTargetMenu.getCurrentValue();
+        AutoChoices.driveTime = driveTimeMenu.getCurrentValue();
+        AutoChoices.drivePower = drivePowerMenu.getCurrentValue();
         //
         // Show choices.
         //
-        robot.dashboard.displayPrintf(1, "Auto Choices: %s", autoChoices);
+        robot.dashboard.displayPrintf(1, "Auto Choices: %s", AutoChoices);
     }   //doAutoChoicesMenus
 
 }   //class FtcAuto
