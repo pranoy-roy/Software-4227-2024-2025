@@ -146,7 +146,7 @@ public class AutoV1 implements TrcRobot.RobotCommand
 
                     robot.arm.motor.setTargetPosition(95);
                     robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.arm.setMotorPower(0.5);
+                    robot.arm.setMotorPower(0.75);
 
                     robot.Lclaw.setLogicalPosition(0);
                     robot.Rclaw.setLogicalPosition(1);
