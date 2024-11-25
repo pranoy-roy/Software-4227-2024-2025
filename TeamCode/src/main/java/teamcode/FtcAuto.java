@@ -63,7 +63,7 @@ public class FtcAuto extends FtcOpMode
 
     public enum AutoStrategy
     {
-        AutoV1,
+        AUTOV1,
         PID_DRIVE,
         TIMED_DRIVE,
         DO_NOTHING
@@ -157,7 +157,7 @@ public class FtcAuto extends FtcOpMode
                         0.0, autoChoices.drivePower, 0.0);
                 }
                 break;
-            case AutoV1:
+            case AUTOV1:
                 autoCommand = new AutoV1(robot, autoChoices);
                 break;
             case DO_NOTHING:
@@ -347,7 +347,7 @@ public class FtcAuto extends FtcOpMode
         startPosMenu.addChoice("Start Position Right", StartPos.RIGHT, false, strategyMenu);
 
         strategyMenu.addChoice("PID Drive", AutoStrategy.PID_DRIVE, false, xTargetMenu);
-        strategyMenu.addChoice("Auto V1", AutoStrategy.AutoV1, false);
+        strategyMenu.addChoice("AUTO V1", AutoStrategy.AUTOV1, false);
 
         strategyMenu.addChoice("Timed Drive", AutoStrategy.TIMED_DRIVE, false, driveTimeMenu);
         strategyMenu.addChoice("Do nothing", AutoStrategy.DO_NOTHING, true);
