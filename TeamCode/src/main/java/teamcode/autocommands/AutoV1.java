@@ -42,6 +42,10 @@ public class AutoV1 implements TrcRobot.RobotCommand
     {
         START,
         MOVE,
+        ARMMOVE,
+        MOVEBACK,
+        OPENCLAWS,
+        MOVETOOBSERVATIONZONE,
         DONE
     }   //enum State
 
@@ -135,33 +139,29 @@ public class AutoV1 implements TrcRobot.RobotCommand
 
                     robot.robotDrive.driveBase.holonomicDrive(0.0, 0.5, 0.0, 1.0, event);
 
-                    robot.arm.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-                    robot.arm.motor.setTargetPosition(0);
-                    robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                    robot.arm.motor.setTargetPosition(250);
-                    robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.arm.setMotorPower(0.5);
-
-                    robot.arm.motor.setTargetPosition(325);
-                    robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.arm.setMotorPower(0.75);
-
+                    //robot.robotDrive.purePursuitDrive.start(event, 10, point, false, point1);
+                    sm.waitForSingleEvent(event, State.ARMMOVE);
+                    break;
+                case ARMMOVE:
+                    robot.arm.setMotorPower(1);
+                    timer.set(4,event);
+                    sm.waitForSingleEvent(event, State.MOVEBACK);
+                    break;
+                case MOVEBACK:
+                    robot.robotDrive.driveBase.holonomicDrive(0.0, -0.5, 0.0, 1.0, event);
+                    sm.waitForSingleEvent(event, State.OPENCLAWS);
+                    break;
+                case OPENCLAWS:
                     robot.Lclaw.setLogicalPosition(0);
                     robot.Rclaw.setLogicalPosition(1);
-
-                    robot.arm.motor.setTargetPosition(0);
-                    robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.arm.setMotorPower(0.5);
-
+                    timer.set(2,event);
+                    sm.waitForSingleEvent(event, State.MOVETOOBSERVATIONZONE);
+                    break;
+                case MOVETOOBSERVATIONZONE:
                     robot.robotDrive.driveBase.holonomicDrive(0.0, -0.5, 0.0, 1.0, event);
                     robot.robotDrive.driveBase.holonomicDrive(0.5, 0.0, 0.0, 2.0, event);
-
-                    //robot.robotDrive.purePursuitDrive.start(event, 10, point, false, point1);
                     sm.waitForSingleEvent(event, State.DONE);
                     break;
-
                 case DONE:
                     // We are done.
                     cancel();
