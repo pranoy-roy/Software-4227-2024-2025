@@ -68,6 +68,7 @@ public class Robot
     public FtcRobotBattery battery;
     // Subsystems
     public FtcDcMotor arm;
+    public FtcDcMotor armBase;
     public FtcServo Lclaw;
     public FtcServo Rclaw;
     /**
@@ -117,6 +118,7 @@ public class Robot
             if (RobotParams.Preferences.useSubsystems)
             {
                 arm = new FtcDcMotor("arm");
+                armBase = new FtcDcMotor("armBase");
                 Lclaw = new FtcServo("Lclaw");
                 Rclaw = new FtcServo("Rclaw");
             }
