@@ -44,6 +44,7 @@ public class AutoV1 implements TrcRobot.RobotCommand
         MOVE,
         ARMMOVE,
         MOVEBACK,
+        ARMMOVEBACK,
         OPENCLAWS,
         MOVETOOBSERVATIONZONE,
         DONE
@@ -134,27 +135,27 @@ public class AutoV1 implements TrcRobot.RobotCommand
                 default:
 
                 case MOVE:
-                    //TrcPose2D point = new TrcPose2D(0,0,0);
-                    //TrcPose2D point1 = new TrcPose2D(0,3,0);
-
-                    robot.robotDrive.driveBase.holonomicDrive(0.0, 0.5, 0.0, 1.0, event);
-
-                    //robot.robotDrive.purePursuitDrive.start(event, 10, point, false, point1);
+                    robot.robotDrive.driveBase.holonomicDrive(0, 0.5, 0.0, 1.0, event);
                     sm.waitForSingleEvent(event, State.ARMMOVE);
                     break;
                 case ARMMOVE:
-                    robot.arm.setMotorPower(1);
-                    timer.set(4,event);
+                    robot.arm.setMotorPower(0.5);
+                    timer.set(2.0,event);
                     sm.waitForSingleEvent(event, State.MOVEBACK);
                     break;
                 case MOVEBACK:
                     robot.robotDrive.driveBase.holonomicDrive(0.0, -0.5, 0.0, 1.0, event);
+                    sm.waitForSingleEvent(event, State.ARMMOVEBACK);
+                    break;
+                case ARMMOVEBACK:
+                    robot.arm.setMotorPower(-0.5);
+                    timer.set(1.0,event);
                     sm.waitForSingleEvent(event, State.OPENCLAWS);
                     break;
                 case OPENCLAWS:
-                    robot.Lclaw.setLogicalPosition(0);
-                    robot.Rclaw.setLogicalPosition(1);
-                    timer.set(2,event);
+                    robot.Lclaw.setLogicalPosition(0.5);
+                    robot.Rclaw.setLogicalPosition(0);
+                    timer.set(1.0,event);
                     sm.waitForSingleEvent(event, State.MOVETOOBSERVATIONZONE);
                     break;
                 case MOVETOOBSERVATIONZONE:

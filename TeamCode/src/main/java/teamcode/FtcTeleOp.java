@@ -168,7 +168,7 @@ public class FtcTeleOp extends FtcOpMode
         if (slowPeriodicLoop)
         {
             robot.arm.setMotorPower(-0.5*operatorGamepad.getLeftStickY(false));
-            robot.armBase.setMotorPower(0.5*operatorGamepad.getRightStickX(false));
+         //   robot.armBase.setMotorPower(0.5*operatorGamepad.getRightStickX(false));
 
             //
             // DriveBase subsystem.
@@ -400,14 +400,14 @@ public class FtcTeleOp extends FtcOpMode
                 break;
             case B:
                 if(pressed){
-                    robot.Lclaw.setLogicalPosition(1);
+                    robot.Lclaw.setLogicalPosition(0.5);
                     robot.Rclaw.setLogicalPosition(0);
                 }
                 break;
             case X:
                 if(pressed){
                     robot.Lclaw.setLogicalPosition(0);
-                    robot.Rclaw.setLogicalPosition(1);
+                    robot.Rclaw.setLogicalPosition(0.5);
                 }
                 break;
             case Y:
