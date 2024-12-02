@@ -126,6 +126,7 @@ public class AutoV1 implements TrcRobot.RobotCommand
         secondTimer.cancel();
         secondSM.stop();
     }   //cancel
+
     /**
      * This method must be called periodically by the caller to drive the command sequence forward.
      *
@@ -151,11 +152,11 @@ public class AutoV1 implements TrcRobot.RobotCommand
                         robot.globalTracer.traceInfo(moduleName, "***** Do delay " + autoChoices.delay + "s.");
                         firstTimer.set(autoChoices.delay, firstEvent);
                         firstSM.waitForSingleEvent(firstEvent, FirstState.MOVE);
-                    } else {
+                    }
+                    else {
                         firstSM.setState(FirstState.MOVE);
                     }
                     break;
-
                 case MOVE:
                     robot.robotDrive.driveBase.holonomicDrive(0.0, 0.5, 0.0, 1.0, firstEvent);
                     firstSM.waitForSingleEvent(firstEvent, FirstState.ARMMOVE);
@@ -207,9 +208,9 @@ public class AutoV1 implements TrcRobot.RobotCommand
             robot.globalTracer.tracePreStateInfo(secondSM.toString(), secondState);
             switch (secondState) {
                 case START:
-                    secondSM.setState(SecondState.CLOSECLAWS);
+                    secondTimer.set(5.0, secondEvent);
+                    secondSM.waitForSingleEvent(secondEvent, SecondState.CLOSECLAWS);
                     break;
-
                 case CLOSECLAWS:
                     robot.Lclaw.setLogicalPosition(0);
                     robot.Rclaw.setLogicalPosition(0.5);
