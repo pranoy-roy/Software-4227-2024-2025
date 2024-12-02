@@ -263,7 +263,7 @@ public class FtcAuto extends FtcOpMode
         //
         if (autoCommand != null)
         {
-            autoCommand.cancel();
+            autoCommand.firstCancel();
         }
         //
         // Tell robot object opmode is about to stop so it can do the necessary cleanup for the mode.
