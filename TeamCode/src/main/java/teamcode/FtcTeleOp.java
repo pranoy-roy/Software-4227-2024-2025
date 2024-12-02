@@ -168,7 +168,7 @@ public class FtcTeleOp extends FtcOpMode
         if (slowPeriodicLoop)
         {
             robot.arm.setMotorPower(-0.5*operatorGamepad.getLeftStickY(false));
-         //   robot.armBase.setMotorPower(0.5*operatorGamepad.getRightStickX(false));
+            //robot.armBase.setMotorPower(-0.5*operatorGamepad.getRightStickY(false));
 
             //
             // DriveBase subsystem.
