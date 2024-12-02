@@ -336,7 +336,7 @@ public class FtcTest extends FtcTeleOp
     {
         if (testCommand != null)
         {
-            testCommand.firstCancel();
+            testCommand.cancel();
         }
 
         if (robot.robotDrive != null)

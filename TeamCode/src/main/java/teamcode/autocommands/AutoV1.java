@@ -106,20 +106,16 @@ public class AutoV1 implements TrcRobot.RobotCommand
      * @return true if the command is running, false otherwise.
      */
     @Override
-    public boolean isFirstSMActive()
+    public boolean isActive()
     {
-        return firstSM.isEnabled();
-    }   //isActive
-    public boolean isSecondSMActive()
-    {
-        return secondSM.isEnabled();
+        return firstSM.isEnabled() && secondSM.isEnabled();
     }   //isActive
 
     /**
      * This method cancels the command if it is active.
      */
     @Override
-    public void firstCancel()
+    public void cancel()
     {
         firstTimer.cancel();
         firstSM.stop();
@@ -160,8 +156,6 @@ public class AutoV1 implements TrcRobot.RobotCommand
                     }
                     break;
 
-                default:
-
                 case MOVE:
                     robot.robotDrive.driveBase.holonomicDrive(0.0, 0.5, 0.0, 1.0, firstEvent);
                     firstSM.waitForSingleEvent(firstEvent, FirstState.ARMMOVE);
@@ -193,8 +187,10 @@ public class AutoV1 implements TrcRobot.RobotCommand
                 case DONE:
                     // We are done and are moving to second part of autonomous.
                     secondSM.start(SecondState.START);
-                    firstCancel();
+                    cancel();
                     break;
+
+                default:
             }
 
             robot.globalTracer.tracePostStateInfo(
@@ -213,8 +209,6 @@ public class AutoV1 implements TrcRobot.RobotCommand
                 case START:
                     secondSM.setState(SecondState.CLOSECLAWS);
                     break;
-
-                default:
 
                 case CLOSECLAWS:
                     robot.Lclaw.setLogicalPosition(0);
@@ -265,6 +259,8 @@ public class AutoV1 implements TrcRobot.RobotCommand
                     // We are done.
                     secondCancel();
                     break;
+
+                default:
             }
 
             robot.globalTracer.tracePostStateInfo(

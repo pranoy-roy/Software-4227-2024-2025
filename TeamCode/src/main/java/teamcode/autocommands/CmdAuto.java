@@ -75,7 +75,7 @@ public class CmdAuto implements TrcRobot.RobotCommand
      * @return true if the command is running, false otherwise.
      */
     @Override
-    public boolean isFirstSMActive()
+    public boolean isActive()
     {
         return sm.isEnabled();
     }   //isActive
@@ -84,7 +84,7 @@ public class CmdAuto implements TrcRobot.RobotCommand
      * This method cancels the command if it is active.
      */
     @Override
-    public void firstCancel()
+    public void cancel()
     {
         timer.cancel();
         sm.stop();
@@ -127,7 +127,7 @@ public class CmdAuto implements TrcRobot.RobotCommand
                 default:
                 case DONE:
                     // We are done.
-                    firstCancel();
+                    cancel();
                     break;
             }
 
