@@ -51,14 +51,14 @@ public class AutoV1 implements TrcRobot.RobotCommand
     private enum SecondState
     {
         START,
+        MOVEARMBASE,
         CLOSECLAWS,
-        FIRSTARMMOVE,
-        FIRSTARMMOVEBACK,
+        MOVEARMBASEBACK,
         MOVE,
-        SECONDARMMOVE,
+        ARMMOVE,
         MOVEBACK,
         OPENCLAWS,
-        SECONDARMMOVEBACK,
+        ARMMOVEBACK,
         MOVETOOBSERVATIONZONE,
         DONE
     }   //enum State
@@ -158,7 +158,7 @@ public class AutoV1 implements TrcRobot.RobotCommand
                     }
                     break;
                 case MOVE:
-                    robot.robotDrive.driveBase.holonomicDrive(0.0, 0.5, 0.0, 1.0, firstEvent);
+                    robot.robotDrive.driveBase.holonomicDrive(0.0, 0.5, 0.0, 0.5, firstEvent);
                     firstSM.waitForSingleEvent(firstEvent, FirstState.ARMMOVE);
                     break;
                 case ARMMOVE:
@@ -167,7 +167,7 @@ public class AutoV1 implements TrcRobot.RobotCommand
                     firstSM.waitForSingleEvent(firstEvent, FirstState.MOVEBACK);
                     break;
                 case MOVEBACK:
-                    robot.robotDrive.driveBase.holonomicDrive(0.0, -0.5, 0.0, 1.0, firstEvent);
+                    robot.robotDrive.driveBase.holonomicDrive(0.0, -0.5, 0.0, 0.5, firstEvent);
                     firstSM.waitForSingleEvent(firstEvent, FirstState.OPENCLAWS);
                     break;
                 case OPENCLAWS:
@@ -182,7 +182,8 @@ public class AutoV1 implements TrcRobot.RobotCommand
                     firstSM.waitForSingleEvent(firstEvent, FirstState.MOVETOOBSERVATIONZONE);
                     break;
                 case MOVETOOBSERVATIONZONE:
-                    robot.robotDrive.driveBase.holonomicDrive(0.5, 0.0, 0.0, 2.0, firstEvent);
+                    robot.robotDrive.driveBase.holonomicDrive(0.0, 0.5, 0.0, 0.25, firstEvent);
+                    robot.robotDrive.driveBase.holonomicDrive(0.5, 0.0, 0.0, 1.0, firstEvent);
                     firstSM.waitForSingleEvent(firstEvent, FirstState.DONE);
                     break;
                 case DONE:
@@ -211,49 +212,49 @@ public class AutoV1 implements TrcRobot.RobotCommand
                     secondTimer.set(5.0, secondEvent);
                     secondSM.waitForSingleEvent(secondEvent, SecondState.CLOSECLAWS);
                     break;
+                case MOVEARMBASE:
+                    robot.armBase.setMotorPower(0.5);
+                    secondTimer.set(0.5, secondEvent);
+                    secondSM.waitForSingleEvent(secondEvent, SecondState.CLOSECLAWS);
+                    break;
                 case CLOSECLAWS:
                     robot.Lclaw.setLogicalPosition(0);
                     robot.Rclaw.setLogicalPosition(0.5);
                     secondTimer.set(1.0, secondEvent);
-                    secondSM.waitForSingleEvent(secondEvent, SecondState.FIRSTARMMOVE);
+                    secondSM.waitForSingleEvent(secondEvent, SecondState.MOVEARMBASEBACK);
                     break;
-                case FIRSTARMMOVE:
-                    robot.arm.setMotorPower(1);
-                    secondTimer.set(1.0, secondEvent);
-                    secondSM.waitForSingleEvent(secondEvent, SecondState.FIRSTARMMOVEBACK);
-                    break;
-                case FIRSTARMMOVEBACK:
-                    robot.arm.setMotorPower(-1);
-                    secondTimer.set(1.0, secondEvent);
+                case MOVEARMBASEBACK:
+                    robot.armBase.setMotorPower(-0.5);
+                    secondTimer.set(0.5, secondEvent);
                     secondSM.waitForSingleEvent(secondEvent, SecondState.MOVE);
                     break;
                 case MOVE:
-                    robot.robotDrive.driveBase.holonomicDrive(0.5, 0.0, 0.0, 1.5, secondEvent);
-                    robot.robotDrive.driveBase.holonomicDrive(0.0, 0.5, 0.0, 1.0, secondEvent);
-                    secondSM.waitForSingleEvent(secondEvent, SecondState.SECONDARMMOVE);
+                    robot.robotDrive.driveBase.holonomicDrive(0.5, 0.0, 0.0, 0.75, secondEvent);
+                    robot.robotDrive.driveBase.holonomicDrive(0.0, 0.5, 0.0, 0.25, secondEvent);
+                    secondSM.waitForSingleEvent(secondEvent, SecondState.ARMMOVE);
                     break;
-                case SECONDARMMOVE:
+                case ARMMOVE:
                     robot.arm.setMotorPower(0.5);
                     secondTimer.set(2.0, secondEvent);
                     secondSM.waitForSingleEvent(secondEvent, SecondState.MOVEBACK);
                     break;
                 case MOVEBACK:
-                    robot.robotDrive.driveBase.holonomicDrive(0.0, -0.5, 0.0, 1.0, secondEvent);
+                    robot.robotDrive.driveBase.holonomicDrive(0.0, -0.5, 0.0, 0.5, secondEvent);
                     secondSM.waitForSingleEvent(secondEvent, SecondState.OPENCLAWS);
                     break;
                 case OPENCLAWS:
                     robot.Lclaw.setLogicalPosition(0.5);
                     robot.Rclaw.setLogicalPosition(0);
                     secondTimer.set(1.0, secondEvent);
-                    secondSM.waitForSingleEvent(secondEvent, SecondState.SECONDARMMOVEBACK);
+                    secondSM.waitForSingleEvent(secondEvent, SecondState.ARMMOVEBACK);
                     break;
-                case SECONDARMMOVEBACK:
+                case ARMMOVEBACK:
                     robot.arm.setMotorPower(-0.5);
                     secondTimer.set(1.0, secondEvent);
                     secondSM.waitForSingleEvent(secondEvent, SecondState.MOVETOOBSERVATIONZONE);
                     break;
                 case MOVETOOBSERVATIONZONE:
-                    robot.robotDrive.driveBase.holonomicDrive(0.5, 0.0, 0.0, 2.0, secondEvent);
+                    robot.robotDrive.driveBase.holonomicDrive(0.5, 0.0, 0.0, 1.0, secondEvent);
                     secondSM.waitForSingleEvent(secondEvent, SecondState.DONE);
                     break;
                 case DONE:
