@@ -51,7 +51,6 @@ public class AutoV1 implements TrcRobot.RobotCommand
     private enum SecondState
     {
         START,
-        MOVEARMBASE,
         CLOSECLAWS,
         MOVEARMBASEBACK,
         MOVE,
@@ -171,8 +170,8 @@ public class AutoV1 implements TrcRobot.RobotCommand
                     firstSM.waitForSingleEvent(firstEvent, FirstState.OPENCLAWS);
                     break;
                 case OPENCLAWS:
-                    robot.Lclaw.setLogicalPosition(0.5);
-                    robot.Rclaw.setLogicalPosition(0);
+                    robot.Lclaw.setLogicalPosition(0);
+                    robot.Rclaw.setLogicalPosition(0.5);
                     firstTimer.set(1.0, firstEvent);
                     firstSM.waitForSingleEvent(firstEvent, FirstState.ARMMOVEBACK);
                     break;
@@ -209,17 +208,13 @@ public class AutoV1 implements TrcRobot.RobotCommand
             robot.globalTracer.tracePreStateInfo(secondSM.toString(), secondState);
             switch (secondState) {
                 case START:
-                    secondTimer.set(5.0, secondEvent);
-                    secondSM.waitForSingleEvent(secondEvent, SecondState.CLOSECLAWS);
-                    break;
-                case MOVEARMBASE:
-                    robot.armBase.setMotorPower(0.5);
-                    secondTimer.set(0.5, secondEvent);
-                    secondSM.waitForSingleEvent(secondEvent, SecondState.CLOSECLAWS);
+                    secondSM.setState(SecondState.CLOSECLAWS);
                     break;
                 case CLOSECLAWS:
-                    robot.Lclaw.setLogicalPosition(0);
-                    robot.Rclaw.setLogicalPosition(0.5);
+                    robot.Lclaw.setLogicalPosition(0.75);
+                    robot.Rclaw.setLogicalPosition(0);
+                    robot.Lclaw.setControllerOn(true);
+                    robot.Rclaw.setControllerOn(true);
                     secondTimer.set(1.0, secondEvent);
                     secondSM.waitForSingleEvent(secondEvent, SecondState.MOVEARMBASEBACK);
                     break;
@@ -243,8 +238,8 @@ public class AutoV1 implements TrcRobot.RobotCommand
                     secondSM.waitForSingleEvent(secondEvent, SecondState.OPENCLAWS);
                     break;
                 case OPENCLAWS:
-                    robot.Lclaw.setLogicalPosition(0.5);
-                    robot.Rclaw.setLogicalPosition(0);
+                    robot.Lclaw.setLogicalPosition(0);
+                    robot.Rclaw.setLogicalPosition(0.5);
                     secondTimer.set(1.0, secondEvent);
                     secondSM.waitForSingleEvent(secondEvent, SecondState.ARMMOVEBACK);
                     break;
@@ -258,7 +253,6 @@ public class AutoV1 implements TrcRobot.RobotCommand
                     secondSM.waitForSingleEvent(secondEvent, SecondState.DONE);
                     break;
                 case DONE:
-                    // We are done.
                     secondCancel();
                     break;
 
