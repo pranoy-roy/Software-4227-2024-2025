@@ -243,6 +243,8 @@ public class AutoV1 implements TrcRobot.RobotCommand
                     }
 
                     else {
+                        finishedSecondState = false;
+                        finishedThirdState = false;
                         cancel();
                     }
                     break;
