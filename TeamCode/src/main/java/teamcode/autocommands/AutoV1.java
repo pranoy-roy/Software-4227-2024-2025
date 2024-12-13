@@ -46,35 +46,21 @@ public class AutoV1 implements TrcRobot.RobotCommand
         ARMMOVEBACK,
         MOVETOOBSERVATIONZONE,
         DONE
-    }
+    }   //enum FirstState
 
     private enum SecondState
     {
         START,
         CLOSECLAWS,
         MOVEARMBASEBACK,
-        DONE
-    }
-
-    private enum ThirdState
-    {
-        START,
-        MOVEFORWARD,
-        LOWERARM,
-        CLOSECLAWS,
-        RAISEARM,
-        MOVEFORWARDTOSPIKE,
-        ROTATE,
-        MOVEINTOOBSERVATIONZONE,
-        LOWERARMWITHSAMPLE,
+        MOVE,
+        ARMMOVE,
+        MOVEBACK,
         OPENCLAWS,
-        RAISEARMBASEANDARM,
-        MOVEOUTOFOBSERVATIONZONE,
-        ROTATEBACK,
-        WAIT,
-        MOVEBACKINTOOBSERVATIONZONE,
+        ARMMOVEBACK,
+        MOVETOOBSERVATIONZONE,
         DONE
-    }
+    }   //enum State
 
     private final Robot robot;
     private final FtcAuto.AutoChoices autoChoices;
@@ -86,14 +72,6 @@ public class AutoV1 implements TrcRobot.RobotCommand
     private final TrcTimer secondTimer;
     private final TrcEvent secondEvent;
     private final TrcStateMachine<SecondState> secondSM;
-
-    private final TrcTimer thirdTimer;
-    private final TrcEvent thirdEvent;
-    private final TrcStateMachine<ThirdState> thirdSM;
-
-    private boolean finishedFirstState;
-    private boolean finishedSecondState;
-    private boolean finishedThirdState;
 
     /**
      * Constructor: Create an instance of the object.
@@ -114,14 +92,6 @@ public class AutoV1 implements TrcRobot.RobotCommand
         secondEvent = new TrcEvent(moduleName);
         secondSM = new TrcStateMachine<>(moduleName);
 
-        thirdTimer = new TrcTimer(moduleName);
-        thirdEvent = new TrcEvent(moduleName);
-        thirdSM = new TrcStateMachine<>(moduleName);
-
-        finishedFirstState = true;
-        finishedSecondState = false;
-        finishedThirdState = false;
-
         firstSM.start(FirstState.START);
     }   //CmdAuto
 
@@ -137,7 +107,7 @@ public class AutoV1 implements TrcRobot.RobotCommand
     @Override
     public boolean isActive()
     {
-        return firstSM.isEnabled() && secondSM.isEnabled() && thirdSM.isEnabled();
+        return firstSM.isEnabled() && secondSM.isEnabled();
     }   //isActive
 
     /**
@@ -156,12 +126,6 @@ public class AutoV1 implements TrcRobot.RobotCommand
         secondSM.stop();
     }   //cancel
 
-    public void thirdCancel()
-    {
-        thirdTimer.cancel();
-        thirdSM.stop();
-    }   //cancel
-
     /**
      * This method must be called periodically by the caller to drive the command sequence forward.
      *
@@ -173,7 +137,6 @@ public class AutoV1 implements TrcRobot.RobotCommand
     {
         FirstState firstState = firstSM.checkReadyAndGetState();
         SecondState secondState = secondSM.checkReadyAndGetState();
-        ThirdState thirdState = thirdSM.checkReadyAndGetState();
 
         if (firstState == null)
         {
@@ -190,63 +153,62 @@ public class AutoV1 implements TrcRobot.RobotCommand
                         firstSM.waitForSingleEvent(firstEvent, FirstState.MOVE);
                     }
                     else {
-                        firstSM.setState(FirstState.MOVE);
+                        robot.Lclaw.setLogicalPosition(0.5);
+                        robot.Rclaw.setLogicalPosition(0);
+                        robot.Lclaw.setControllerOn(true);
+                        robot.Rclaw.setControllerOn(true);
+                        robot.robotDrive.driveBase.holonomicDrive(0.0, 0.5, 0.0, 0.25, firstEvent);
+                        robot.robotDrive.driveBase.holonomicDrive(0.0, 0.0, 1.0, 0.4, firstEvent);
+                        firstSM.waitForSingleEvent(firstEvent, FirstState.MOVE);
                     }
                     break;
                 case MOVE:
+                    robot.Lclaw.setLogicalPosition(0.5);
+                    robot.Rclaw.setLogicalPosition(0);
+                    robot.Lclaw.setControllerOn(true);
+                    robot.Rclaw.setControllerOn(true);
+                    robot.robotDrive.driveBase.holonomicDrive(0.0, 0.5, 0.0, 0.825, firstEvent);
                     robot.armBase.setMotorPower(1);
-                    if (finishedSecondState) {
-                        robot.robotDrive.driveBase.holonomicDrive(-0.5, 0.0, 0.0, 1.0, firstEvent);
-                    }
-                    robot.robotDrive.driveBase.holonomicDrive(0.0, 0.5, 0.0, 0.5, firstEvent);
                     firstSM.waitForSingleEvent(firstEvent, FirstState.ARMMOVE);
                     break;
                 case ARMMOVE:
+                    robot.Lclaw.setLogicalPosition(0.5);
+                    robot.Rclaw.setLogicalPosition(0);
+                    robot.Lclaw.setControllerOn(true);
+                    robot.Rclaw.setControllerOn(true);
                     robot.armBase.setMotorPower(1);
-                    robot.arm.setMotorPower(0.5);
-                    firstTimer.set(2.5, firstEvent);
+                    robot.arm.setMotorPower(-1);
+                    firstTimer.set(1.5, firstEvent);
                     firstSM.waitForSingleEvent(firstEvent, FirstState.OPENCLAWS);
                     break;
                 case OPENCLAWS:
                     robot.armBase.setMotorPower(1);
                     robot.Lclaw.setLogicalPosition(0);
                     robot.Rclaw.setLogicalPosition(0.5);
-                    firstTimer.set(1.0, firstEvent);
-                    firstSM.waitForSingleEvent(firstEvent, FirstState.ARMMOVEBACK);
-                    break;
-                case ARMMOVEBACK:
-                    robot.armBase.setMotorPower(1);
-                    robot.arm.setMotorPower(-0.5);
-                    firstTimer.set(1.0, firstEvent);
+                    firstTimer.set(1.5, firstEvent);
                     firstSM.waitForSingleEvent(firstEvent, FirstState.MOVEBACK);
                     break;
                 case MOVEBACK:
                     robot.armBase.setMotorPower(1);
-                    robot.robotDrive.driveBase.holonomicDrive(0.0, -0.5, 0.0, 0.5, firstEvent);
+                    robot.robotDrive.driveBase.holonomicDrive(0.0, -0.5, 0.0, 0.65, firstEvent);
+                    firstSM.waitForSingleEvent(firstEvent, FirstState.ARMMOVEBACK);
+                    break;
+                case ARMMOVEBACK:
+                    robot.armBase.setMotorPower(1);
+                    robot.arm.setMotorPower(0.5);
+                    firstTimer.set(2.0, firstEvent);
                     firstSM.waitForSingleEvent(firstEvent, FirstState.MOVETOOBSERVATIONZONE);
                     break;
                 case MOVETOOBSERVATIONZONE:
                     robot.armBase.setMotorPower(1);
-                    robot.robotDrive.driveBase.holonomicDrive(0.0, 0.5, 0.0, 0.2, firstEvent);
-                    robot.robotDrive.driveBase.holonomicDrive(0.5, 0.0, 0.0, 1.0, firstEvent);
+                    robot.robotDrive.driveBase.holonomicDrive(0.0, 0.5, 0.0, 0.1, firstEvent);
+                    robot.robotDrive.driveBase.holonomicDrive(0.5, 0.0, 0.0, 2.5, firstEvent);
                     firstSM.waitForSingleEvent(firstEvent, FirstState.DONE);
                     break;
                 case DONE:
-                    if (finishedFirstState) {
-                        secondSM.setState(SecondState.START);
-                        finishedFirstState = false;
-                    }
-
-                    else if (finishedSecondState && !finishedThirdState) {
-                        thirdSM.setState(ThirdState.START);
-                        finishedSecondState = false;
-                    }
-
-                    else {
-                        finishedSecondState = false;
-                        finishedThirdState = false;
-                        cancel();
-                    }
+                    // We are done and are moving to second part of autonomous.
+                    secondSM.start(SecondState.START);
+                    cancel();
                     break;
 
                 default:
@@ -266,11 +228,11 @@ public class AutoV1 implements TrcRobot.RobotCommand
             robot.globalTracer.tracePreStateInfo(secondSM.toString(), secondState);
             switch (secondState) {
                 case START:
-                    secondSM.setState(SecondState.CLOSECLAWS);
+                    robot.robotDrive.driveBase.holonomicDrive(0.0, -0.5, 0.0, 0.1, secondEvent);
+                    secondSM.waitForSingleEvent(secondEvent,SecondState.CLOSECLAWS);
                     break;
                 case CLOSECLAWS:
-                    robot.armBase.setMotorPower(1);
-                    robot.Lclaw.setLogicalPosition(0.75);
+                    robot.Lclaw.setLogicalPosition(0.5);
                     robot.Rclaw.setLogicalPosition(0);
                     robot.Lclaw.setControllerOn(true);
                     robot.Rclaw.setControllerOn(true);
@@ -280,11 +242,38 @@ public class AutoV1 implements TrcRobot.RobotCommand
                 case MOVEARMBASEBACK:
                     robot.armBase.setMotorPower(-0.5);
                     secondTimer.set(0.5, secondEvent);
+                    secondSM.waitForSingleEvent(secondEvent, SecondState.MOVE);
+                    break;
+                case MOVE:
+                    robot.robotDrive.driveBase.holonomicDrive(0.5, 0.0, 0.0, 0.75, secondEvent);
+                    robot.robotDrive.driveBase.holonomicDrive(0.0, 0.5, 0.0, 0.25, secondEvent);
+                    secondSM.waitForSingleEvent(secondEvent, SecondState.ARMMOVE);
+                    break;
+                case ARMMOVE:
+                    robot.arm.setMotorPower(0.5);
+                    secondTimer.set(2.0, secondEvent);
+                    secondSM.waitForSingleEvent(secondEvent, SecondState.MOVEBACK);
+                    break;
+                case MOVEBACK:
+                    robot.robotDrive.driveBase.holonomicDrive(0.0, -0.5, 0.0, 0.5, secondEvent);
+                    secondSM.waitForSingleEvent(secondEvent, SecondState.OPENCLAWS);
+                    break;
+                case OPENCLAWS:
+                    robot.Lclaw.setLogicalPosition(0);
+                    robot.Rclaw.setLogicalPosition(0.5);
+                    secondTimer.set(1.0, secondEvent);
+                    secondSM.waitForSingleEvent(secondEvent, SecondState.ARMMOVEBACK);
+                    break;
+                case ARMMOVEBACK:
+                    robot.arm.setMotorPower(-0.5);
+                    secondTimer.set(1.0, secondEvent);
+                    secondSM.waitForSingleEvent(secondEvent, SecondState.MOVETOOBSERVATIONZONE);
+                    break;
+                case MOVETOOBSERVATIONZONE:
+                    robot.robotDrive.driveBase.holonomicDrive(0.5, 0.0, 0.0, 1.0, secondEvent);
                     secondSM.waitForSingleEvent(secondEvent, SecondState.DONE);
                     break;
                 case DONE:
-                    finishedSecondState = true;
-                    firstSM.setState(FirstState.START);
                     secondCancel();
                     break;
 
@@ -296,104 +285,7 @@ public class AutoV1 implements TrcRobot.RobotCommand
                     robot.robotDrive.purePursuitDrive, null);
         }
 
-        if (thirdState == null)
-        {
-            robot.dashboard.displayPrintf(8, "State: disabled or waiting (nextState=" + thirdSM.getNextState() + ")...");
-        }
-        else {
-            robot.dashboard.displayPrintf(8, "State: " + thirdState);
-            robot.globalTracer.tracePreStateInfo(thirdSM.toString(), thirdState);
-            switch (thirdState) {
-                case START:
-                    thirdSM.setState(ThirdState.MOVEFORWARD);
-                    break;
-                case MOVEFORWARD:
-                    robot.armBase.setMotorPower(1);
-                    robot.robotDrive.driveBase.holonomicDrive(0.0, 0.5, 0.0, 0.2, thirdEvent);
-                    thirdSM.waitForSingleEvent(thirdEvent, ThirdState.LOWERARM);
-                    break;
-                case LOWERARM:
-                    robot.arm.setMotorPower(1);
-                    thirdTimer.set(1.5, thirdEvent);
-                    thirdSM.waitForSingleEvent(thirdEvent, ThirdState.CLOSECLAWS);
-                    break;
-                case CLOSECLAWS:
-                    robot.Lclaw.setLogicalPosition(0.75);
-                    robot.Rclaw.setLogicalPosition(0);
-                    robot.Lclaw.setControllerOn(true);
-                    robot.Rclaw.setControllerOn(true);
-                    thirdTimer.set(1.0, thirdEvent);
-                    thirdSM.waitForSingleEvent(thirdEvent, ThirdState.RAISEARM);
-                    break;
-                case RAISEARM:
-                    robot.arm.setMotorPower(-1);
-                    thirdTimer.set(1.5, thirdEvent);
-                    thirdSM.waitForSingleEvent(thirdEvent, ThirdState.MOVEFORWARDTOSPIKE);
-                    break;
-                case MOVEFORWARDTOSPIKE:
-                    robot.robotDrive.driveBase.holonomicDrive(0.0, 0.5, 0.0, 0.15, thirdEvent);
-                    thirdSM.waitForSingleEvent(thirdEvent, ThirdState.ROTATE);
-                    break;
-                case ROTATE:
-                    robot.robotDrive.driveBase.holonomicDrive(0.0, 0.0, 1.0, 2.0, thirdEvent);
-                    thirdSM.waitForSingleEvent(thirdEvent, ThirdState.MOVEINTOOBSERVATIONZONE);
-                    break;
-                case MOVEINTOOBSERVATIONZONE:
-                    robot.robotDrive.driveBase.holonomicDrive(0.0, 0.5, 0.0, 0.3, thirdEvent);
-                    thirdSM.waitForSingleEvent(thirdEvent, ThirdState.LOWERARMWITHSAMPLE);
-                    break;
-                case LOWERARMWITHSAMPLE:
-                    robot.arm.setMotorPower(1);
-                    thirdTimer.set(1.5, thirdEvent);
-                    thirdSM.waitForSingleEvent(thirdEvent, ThirdState.OPENCLAWS);
-                    break;
-                case OPENCLAWS:
-                    robot.Lclaw.setLogicalPosition(0);
-                    robot.Rclaw.setLogicalPosition(0.5);
-                    thirdTimer.set(1.0, thirdEvent);
-                    thirdSM.waitForSingleEvent(thirdEvent, ThirdState.RAISEARMBASEANDARM);
-                    break;
-                case RAISEARMBASEANDARM:
-                    robot.armBase.setMotorPower(1);
-                    robot.arm.setMotorPower(-1);
-                    thirdTimer.set(2.0, thirdEvent);
-                    thirdSM.waitForSingleEvent(thirdEvent, ThirdState.MOVEOUTOFOBSERVATIONZONE);
-                    break;
-                case MOVEOUTOFOBSERVATIONZONE:
-                    robot.armBase.setMotorPower(1);
-                    robot.robotDrive.driveBase.holonomicDrive(0.0, -0.5, 0.0, 0.2, thirdEvent);
-                    thirdSM.waitForSingleEvent(thirdEvent, ThirdState.ROTATEBACK);
-                    break;
-                case ROTATEBACK:
-                    robot.armBase.setMotorPower(1);
-                    robot.robotDrive.driveBase.holonomicDrive(0.0, 0.0, -1.0, 2.0, thirdEvent);
-                    thirdSM.waitForSingleEvent(thirdEvent, ThirdState.WAIT);
-                    break;
-                case WAIT:
-                    robot.armBase.setMotorPower(1);
-                    thirdTimer.set(4.0, thirdEvent);
-                    thirdSM.waitForSingleEvent(thirdEvent, ThirdState.MOVEBACKINTOOBSERVATIONZONE);
-                    break;
-                case MOVEBACKINTOOBSERVATIONZONE:
-                    robot.armBase.setMotorPower(1);
-                    robot.robotDrive.driveBase.holonomicDrive(0.0, -0.5, 0.0, 0.2, thirdEvent);
-                    thirdSM.waitForSingleEvent(thirdEvent, ThirdState.DONE);
-                    break;
-                case DONE:
-                    finishedThirdState = true;
-                    secondSM.setState(SecondState.START);
-                    thirdCancel();
-                    break;
-
-                default:
-            }
-
-            robot.globalTracer.tracePostStateInfo(
-                    thirdSM.toString(), thirdState, robot.robotDrive.driveBase, robot.robotDrive.pidDrive,
-                    robot.robotDrive.purePursuitDrive, null);
-        }
-
-        return !firstSM.isEnabled() && !secondSM.isEnabled() && !thirdSM.isEnabled();
+        return !firstSM.isEnabled() && !secondSM.isEnabled();
     }   //cmdPeriodic
 
 }   //class CmdAuto

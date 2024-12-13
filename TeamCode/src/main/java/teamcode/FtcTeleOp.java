@@ -400,7 +400,7 @@ public class FtcTeleOp extends FtcOpMode
                 break;
             case B:
                 if(pressed){
-                    robot.Lclaw.setLogicalPosition(0.75);
+                    robot.Lclaw.setLogicalPosition(0.5);
                     robot.Rclaw.setLogicalPosition(0);
                     robot.Lclaw.setControllerOn(true);
                     robot.Rclaw.setControllerOn(true);
