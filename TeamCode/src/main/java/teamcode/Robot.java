@@ -118,7 +118,9 @@ public class Robot
             if (RobotParams.Preferences.useSubsystems)
             {
                 arm = new FtcDcMotor("arm");
+                arm.resetMotorPosition();
                 armBase = new FtcDcMotor("armBase");
+                armBase.resetMotorPosition();
                 Lclaw = new FtcServo("Lclaw");
                 Rclaw = new FtcServo("Rclaw");
             }

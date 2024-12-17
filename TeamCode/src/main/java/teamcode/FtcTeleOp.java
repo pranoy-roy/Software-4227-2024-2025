@@ -23,6 +23,8 @@
 package teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import java.util.Locale;
 
@@ -52,6 +54,9 @@ public class FtcTeleOp extends FtcOpMode
     private boolean operatorAltFunc = false;
     private boolean relocalizing = false;
     private TrcPose2D robotFieldPose = null;
+
+    private PIDFCoefficients encoderPID;
+    private PIDFCoefficients PID;
 
     //
     // Implements FtcOpMode abstract method.
@@ -168,7 +173,22 @@ public class FtcTeleOp extends FtcOpMode
         if (slowPeriodicLoop)
         {
             robot.armBase.setMotorPower(0.5*operatorGamepad.getLeftStickY(false));
-            robot.arm.setMotorPower(-0.5*operatorGamepad.getRightStickY(false));
+            //robot.arm.setMotorPower(-0.5*operatorGamepad.getRightStickY(false));
+            //robot.arm.getMotorPosition();
+            robot.dashboard.displayPrintf(
+                    5, "Arm Position: %f",
+                    robot.arm.getMotorPosition());
+            robot.dashboard.displayPrintf(
+                6, "Arm Base Position: %f",
+                robot.armBase.getMotorPosition());
+            encoderPID = robot.armBase.motor.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+            PID = robot.armBase.motor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.dashboard.displayPrintf(
+                    7, "Arm Base Encoder P: %f",
+                    encoderPID.p);
+            robot.dashboard.displayPrintf(
+                    8, "Arm Base P: %f",
+                    PID.p);
 
             //
             // DriveBase subsystem.
@@ -392,18 +412,24 @@ public class FtcTeleOp extends FtcOpMode
         {
             case A:
                 if(pressed){
+                    robot.armBase.motor.setTargetPosition(250);
+                    robot.armBase.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.armBase.setMotorPower(1);
+                    robot.arm.motor.setTargetPosition(-1750);
+                    encoderPID.p = 500;
+                    PID.p = 500;
+                    robot.armBase.motor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, encoderPID);
+                    robot.armBase.motor.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, PID);
+                    robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     robot.arm.setMotorPower(0.5);
-                }
-                else{
-                    robot.arm.setMotorPower(0);
                 }
                 break;
             case B:
                 if(pressed){
                     robot.Lclaw.setLogicalPosition(0.5);
                     robot.Rclaw.setLogicalPosition(0);
-                    robot.Lclaw.setControllerOn(true);
-                    robot.Rclaw.setControllerOn(true);
+                    /*robot.Lclaw.setControllerOn(true);
+                    robot.Rclaw.setControllerOn(true);*/
                 }
                 break;
             case X:
