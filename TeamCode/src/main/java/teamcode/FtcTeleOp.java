@@ -53,10 +53,9 @@ public class FtcTeleOp extends FtcOpMode
     private boolean driverAltFunc = false;
     private boolean operatorAltFunc = false;
     private boolean relocalizing = false;
+    private boolean manual = false;
     private TrcPose2D robotFieldPose = null;
 
-    private PIDFCoefficients encoderPID;
-    private PIDFCoefficients PID;
 
     //
     // Implements FtcOpMode abstract method.
@@ -173,22 +172,15 @@ public class FtcTeleOp extends FtcOpMode
         if (slowPeriodicLoop)
         {
             robot.armBase.setMotorPower(0.5*operatorGamepad.getLeftStickY(false));
-            //robot.arm.setMotorPower(-0.5*operatorGamepad.getRightStickY(false));
-            //robot.arm.getMotorPosition();
+            if (manual) {
+                robot.arm.setMotorPower(-0.5*operatorGamepad.getRightStickY(false));
+            }
             robot.dashboard.displayPrintf(
                     5, "Arm Position: %f",
                     robot.arm.getMotorPosition());
             robot.dashboard.displayPrintf(
                 6, "Arm Base Position: %f",
                 robot.armBase.getMotorPosition());
-            encoderPID = robot.armBase.motor.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-            PID = robot.armBase.motor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.dashboard.displayPrintf(
-                    7, "Arm Base Encoder P: %f",
-                    encoderPID.p);
-            robot.dashboard.displayPrintf(
-                    8, "Arm Base P: %f",
-                    PID.p);
 
             //
             // DriveBase subsystem.
@@ -410,16 +402,9 @@ public class FtcTeleOp extends FtcOpMode
 
         switch (button)
         {
-            case A:
+            case Y:
                 if(pressed){
-                    robot.armBase.motor.setTargetPosition(250);
-                    robot.armBase.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.armBase.setMotorPower(1);
                     robot.arm.motor.setTargetPosition(-1750);
-                    encoderPID.p = 500;
-                    PID.p = 500;
-                    robot.armBase.motor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, encoderPID);
-                    robot.armBase.motor.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, PID);
                     robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     robot.arm.setMotorPower(0.5);
                 }
@@ -428,8 +413,6 @@ public class FtcTeleOp extends FtcOpMode
                 if(pressed){
                     robot.Lclaw.setLogicalPosition(0.5);
                     robot.Rclaw.setLogicalPosition(0);
-                    /*robot.Lclaw.setControllerOn(true);
-                    robot.Rclaw.setControllerOn(true);*/
                 }
                 break;
             case X:
@@ -438,12 +421,11 @@ public class FtcTeleOp extends FtcOpMode
                     robot.Rclaw.setLogicalPosition(0.5);
                 }
                 break;
-            case Y:
+            case A:
                 if(pressed){
-                    robot.arm.setMotorPower(-0.5);
-                }
-                else{
-                    robot.arm.setMotorPower(0);
+                    robot.arm.motor.setTargetPosition(0);
+                    robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.arm.setMotorPower(0.5);
                 }
                 break;
 
@@ -453,8 +435,21 @@ public class FtcTeleOp extends FtcOpMode
                 break;
 
             case RightBumper:
+
             case DpadUp:
+                if(pressed){
+                    robot.arm.motor.setTargetPosition(-150);
+                    robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.arm.setMotorPower(0.5);
+                }
+                break;
             case DpadDown:
+                if(pressed){
+                    robot.arm.motor.setTargetPosition(-1250);
+                    robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.arm.setMotorPower(1);
+                }
+                break;
             case DpadLeft:
             case DpadRight:
                 break;
@@ -470,6 +465,10 @@ public class FtcTeleOp extends FtcOpMode
                 break;
 
             case Start:
+                if (pressed) {
+                    robot.arm.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    manual = true;
+                }
                 break;
         }
     }   //operatorButtonEvent
