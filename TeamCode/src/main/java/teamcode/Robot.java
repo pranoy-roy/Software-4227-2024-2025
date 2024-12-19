@@ -24,15 +24,13 @@ package teamcode;
 
 import androidx.annotation.NonNull;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-
 import ftclib.drivebase.FtcRobotDrive;
 import ftclib.driverio.FtcDashboard;
 import ftclib.driverio.FtcMatchInfo;
-import ftclib.motor.FtcDcMotor;
 import ftclib.motor.FtcServo;
 import ftclib.robotcore.FtcOpMode;
 import ftclib.sensor.FtcRobotBattery;
+import teamcode.subsystems.Elbow;
 import teamcode.subsystems.LEDIndicator;
 import teamcode.subsystems.RobotBase;
 import teamcode.vision.Vision;
@@ -43,6 +41,7 @@ import trclib.robotcore.TrcDbgTrace;
 import trclib.robotcore.TrcRobot;
 import trclib.sensor.TrcDigitalInput;
 import trclib.timer.TrcTimer;
+import teamcode.subsystems.Shoulder;
 
 /**
  * This class creates the robot object that consists of sensors, indicators, drive base and all the subsystems.
@@ -67,8 +66,8 @@ public class Robot
     public LEDIndicator ledIndicator;
     public FtcRobotBattery battery;
     // Subsystems
-    public FtcDcMotor arm;
-    public FtcDcMotor armBase;
+    public TrcMotor elbow;
+    public TrcMotor shoulder;
     public FtcServo Lclaw;
     public FtcServo Rclaw;
     /**
@@ -117,10 +116,8 @@ public class Robot
             //
             if (RobotParams.Preferences.useSubsystems)
             {
-                arm = new FtcDcMotor("arm");
-                arm.resetMotorPosition();
-                armBase = new FtcDcMotor("armBase");
-                armBase.resetMotorPosition();
+                elbow = new Elbow(this).getMotor();
+                shoulder = new Shoulder(this).getMotor();
                 Lclaw = new FtcServo("Lclaw");
                 Rclaw = new FtcServo("Rclaw");
             }

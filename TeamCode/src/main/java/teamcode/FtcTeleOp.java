@@ -23,8 +23,6 @@
 package teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import java.util.Locale;
 
@@ -54,6 +52,7 @@ public class FtcTeleOp extends FtcOpMode
     private boolean operatorAltFunc = false;
     private boolean relocalizing = false;
     private boolean manual = false;
+    private boolean startPressedAlready = false;
     private TrcPose2D robotFieldPose = null;
 
 
@@ -95,6 +94,8 @@ public class FtcTeleOp extends FtcOpMode
         driverGamepad.setLeftStickInverted(false, true);
         operatorGamepad.setRightStickInverted(false, true);
         setDriveOrientation(RobotParams.Robot.DRIVE_ORIENTATION);
+        robot.elbow.resetPosition();
+        robot.shoulder.resetPosition();
     }   //robotInit
 
     //
@@ -171,16 +172,22 @@ public class FtcTeleOp extends FtcOpMode
     {
         if (slowPeriodicLoop)
         {
-            robot.armBase.setMotorPower(0.5*operatorGamepad.getLeftStickY(false));
             if (manual) {
-                robot.arm.setMotorPower(-0.5*operatorGamepad.getRightStickY(false));
+                robot.elbow.setSoftwarePidEnabled(false);
+                robot.shoulder.setSoftwarePidEnabled(false);
+                robot.elbow.setPower(0.5*operatorGamepad.getRightStickY(false));
+                robot.shoulder.setPower(-0.5*operatorGamepad.getLeftStickY(false));
+            }
+            if (!manual) {
+                robot.elbow.setSoftwarePidEnabled(true);
+                robot.shoulder.setSoftwarePidEnabled(true);
             }
             robot.dashboard.displayPrintf(
                     5, "Arm Position: %f",
-                    robot.arm.getMotorPosition());
+                    robot.elbow.getPosition());
             robot.dashboard.displayPrintf(
                 6, "Arm Base Position: %f",
-                robot.armBase.getMotorPosition());
+                robot.shoulder.getPosition());
 
             //
             // DriveBase subsystem.
@@ -404,9 +411,8 @@ public class FtcTeleOp extends FtcOpMode
         {
             case Y:
                 if(pressed){
-                    robot.arm.motor.setTargetPosition(-1750);
-                    robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.arm.setMotorPower(0.5);
+                    robot.elbow.setPosition(90);
+                    robot.shoulder.setPosition(-68.17);
                 }
                 break;
             case B:
@@ -423,9 +429,8 @@ public class FtcTeleOp extends FtcOpMode
                 break;
             case A:
                 if(pressed){
-                    robot.arm.motor.setTargetPosition(0);
-                    robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.arm.setMotorPower(0.5);
+                    robot.elbow.setPosition(0);
+                    robot.shoulder.setPosition(-68.17);
                 }
                 break;
 
@@ -437,22 +442,9 @@ public class FtcTeleOp extends FtcOpMode
             case RightBumper:
 
             case DpadUp:
-                if(pressed){
-                    robot.arm.motor.setTargetPosition(-150);
-                    robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.arm.setMotorPower(0.5);
-                }
-                break;
             case DpadDown:
-                if(pressed){
-                    robot.arm.motor.setTargetPosition(-1250);
-                    robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.arm.setMotorPower(1);
-                }
-                break;
             case DpadLeft:
             case DpadRight:
-                break;
 
             case Back:
                 if (pressed)
@@ -466,8 +458,15 @@ public class FtcTeleOp extends FtcOpMode
 
             case Start:
                 if (pressed) {
-                    robot.arm.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    manual = true;
+                    if (!startPressedAlready) {
+                        manual = true;
+                        startPressedAlready = true;
+                    }
+
+                    else {
+                        manual = false;
+                        startPressedAlready = false;
+                    }
                 }
                 break;
         }

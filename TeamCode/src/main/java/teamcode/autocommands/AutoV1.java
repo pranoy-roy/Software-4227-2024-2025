@@ -22,8 +22,6 @@
 
 package teamcode.autocommands;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-
 import teamcode.FtcAuto;
 import teamcode.Robot;
 import trclib.robotcore.TrcEvent;
@@ -52,7 +50,7 @@ public class AutoV1 implements TrcRobot.RobotCommand
         PICKUPSPECIMEN,
         MOVETOCENTERWALL,
         PICKUPSAMPLE,
-        MOVEARMBACK,
+        ROTATEWITHSAMPLE,
         DROPSAMPLE,
         MOVEOUTOFOBSERVATIONZONE,
         MOVEINTOOBSERVATIONZONE,
@@ -67,7 +65,7 @@ public class AutoV1 implements TrcRobot.RobotCommand
     private final TrcStateMachine<FirstState> firstSM;
 
     private boolean pickingUpSpecimen;
-    private boolean pickingUpSample;
+    //private boolean pickingUpSample;
 
     /**
      * Constructor: Create an instance of the object.
@@ -85,7 +83,7 @@ public class AutoV1 implements TrcRobot.RobotCommand
         firstSM = new TrcStateMachine<>(moduleName);
 
         pickingUpSpecimen = false;
-        pickingUpSample = false;
+        //pickingUpSample = false;
 
         firstSM.start(FirstState.START);
     }   //CmdAuto
@@ -145,84 +143,74 @@ public class AutoV1 implements TrcRobot.RobotCommand
                     else {
                         robot.Lclaw.setLogicalPosition(0.5);
                         robot.Rclaw.setLogicalPosition(0);
-                        robot.arm.motor.setTargetPosition(0);
-                        robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        robot.arm.setMotorPower(0.75);
+                        robot.elbow.setPosition(-110);
+                        robot.shoulder.setPosition(-75);
                         robot.robotDrive.driveBase.holonomicDrive(0.0, 0.5, 0.0, 0.25, firstEvent);
-                        robot.robotDrive.driveBase.holonomicDrive(0.0, 0.0, -1.0, 0.4, firstEvent);
+                        robot.robotDrive.driveBase.holonomicDrive(0.0, 0.0, 1.0, 0.375, firstEvent);
                         firstSM.waitForSingleEvent(firstEvent, FirstState.MOVE);
                     }
                     break;
                 case MOVE:
                     robot.Lclaw.setLogicalPosition(0.5);
                     robot.Rclaw.setLogicalPosition(0);
-                    robot.robotDrive.driveBase.holonomicDrive(0.0, -0.5, 0.0, 1.5, firstEvent);
-                    robot.armBase.setMotorPower(1);
+                    robot.shoulder.setPosition(-75);
+                    robot.robotDrive.driveBase.holonomicDrive(0.0, 0.5, 0.0, 2.5, firstEvent);
                     firstSM.waitForSingleEvent(firstEvent, FirstState.ARMMOVE);
                     break;
                 case ARMMOVE:
                     robot.Lclaw.setLogicalPosition(0.5);
                     robot.Rclaw.setLogicalPosition(0);
-                    robot.armBase.setMotorPower(1);
-                    robot.arm.motor.setTargetPosition(-1900);
-                    robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.arm.setMotorPower(0.75);
+                    robot.shoulder.setPosition(-75);
+                    robot.elbow.setPosition(60);
                     firstTimer.set(1.5, firstEvent);
                     firstSM.waitForSingleEvent(firstEvent, FirstState.CLIP);
                     break;
                 case CLIP:
                     robot.Lclaw.setLogicalPosition(0.5);
                     robot.Rclaw.setLogicalPosition(0);
-                    robot.armBase.setMotorPower(1);
-                    robot.arm.motor.setTargetPosition(-1250);
-                    robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.arm.setMotorPower(0.75);
+                    robot.shoulder.setPosition(-75);
+                    robot.elbow.setPosition(15);
                     firstTimer.set(1.5, firstEvent);
                     firstSM.waitForSingleEvent(firstEvent, FirstState.OPENCLAWS);
                     break;
                 case OPENCLAWS:
-                    robot.armBase.setMotorPower(1);
                     robot.Lclaw.setLogicalPosition(0);
                     robot.Rclaw.setLogicalPosition(0.5);
+                    robot.shoulder.setPosition(-75);
                     firstTimer.set(1.5, firstEvent);
                     firstSM.waitForSingleEvent(firstEvent, FirstState.MOVEBACK);
                     break;
                 case MOVEBACK:
-                    robot.armBase.setMotorPower(1);
-                    robot.robotDrive.driveBase.holonomicDrive(0.0, 0.5, 0.0, 1.5, firstEvent);
+                    robot.shoulder.setPosition(-75);
+                    robot.robotDrive.driveBase.holonomicDrive(0.0, -0.5, 0.0, 1.5, firstEvent);
                     robot.robotDrive.driveBase.holonomicDrive(0.0, 0.5, 0.0, 0.25, firstEvent);
-                    robot.robotDrive.driveBase.holonomicDrive(0.0, 0.0, 1.0, 0.8, firstEvent);
+                    robot.robotDrive.driveBase.holonomicDrive(0.0, 0.0, 1.0, 0.75, firstEvent);
                     firstSM.waitForSingleEvent(firstEvent, FirstState.ARMMOVEBACK);
                     break;
                 case ARMMOVEBACK:
-                    robot.armBase.setMotorPower(1);
-                    robot.arm.motor.setTargetPosition(0);
-                    robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.arm.setMotorPower(0.75);
+                    robot.elbow.setPosition(-110);
+                    robot.shoulder.setPosition(-75);
                     firstTimer.set(2.0, firstEvent);
                     firstSM.waitForSingleEvent(firstEvent, FirstState.MOVETOOBSERVATIONZONE);
                     break;
                 case MOVETOOBSERVATIONZONE:
-                    robot.armBase.setMotorPower(1);
-                    robot.robotDrive.driveBase.holonomicDrive(0.0, 0.5, 0.0, 0.1, firstEvent);
-                    robot.robotDrive.driveBase.holonomicDrive(0.5, 0.0, 0.0, 2.5, firstEvent);
+                    robot.shoulder.setPosition(-75);
+                    robot.robotDrive.driveBase.holonomicDrive(0.0, -0.5, 0.0, 0.1, firstEvent);
+                    robot.robotDrive.driveBase.holonomicDrive(0.5, 0.0, 0.0, 1.5, firstEvent);
                     if (!pickingUpSpecimen) {
                         pickingUpSpecimen = true;
                         firstSM.waitForSingleEvent(firstEvent, FirstState.GRABSPECIMEN);
                     }
-                    else if (!pickingUpSample) {
+                    /*else if (!pickingUpSample) {
                         pickingUpSample = true;
                         firstSM.waitForSingleEvent(firstEvent, FirstState.PICKUPSAMPLE);
-                    }
+                    }*/
                     else {
                         firstSM.waitForSingleEvent(firstEvent, FirstState.DONE);
                     }
                     break;
                 case GRABSPECIMEN:
-                    robot.armBase.setMotorPower(1);
-                    robot.arm.motor.setTargetPosition(-150);
-                    robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.arm.setMotorPower(0.5);
+                    robot.elbow.setPosition(-100);
                     robot.robotDrive.driveBase.holonomicDrive(0.0, -0.5, 0.0, 0.1, firstEvent);
                     robot.Lclaw.setLogicalPosition(0.5);
                     robot.Rclaw.setLogicalPosition(0);
@@ -232,35 +220,27 @@ public class AutoV1 implements TrcRobot.RobotCommand
                 case PICKUPSPECIMEN:
                     robot.Lclaw.setLogicalPosition(0.5);
                     robot.Rclaw.setLogicalPosition(0);
-                    robot.armBase.setMotorPower(-1);
-                    robot.arm.motor.setTargetPosition(0);
-                    robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.arm.setMotorPower(0.5);
+                    robot.shoulder.setPosition(0);
                     firstTimer.set(1.5, firstEvent);
                     firstSM.waitForSingleEvent(firstEvent, FirstState.MOVETOCENTERWALL);
                     break;
                 case MOVETOCENTERWALL:
                     robot.Lclaw.setLogicalPosition(0.5);
                     robot.Rclaw.setLogicalPosition(0);
-                    robot.robotDrive.driveBase.holonomicDrive(0.5, 0.0, 0.0, 2.5, firstEvent);
-                    robot.armBase.setMotorPower(1);
+                    robot.robotDrive.driveBase.holonomicDrive(-0.5, 0.0, 0.0, 2.5, firstEvent);
                     firstSM.waitForSingleEvent(firstEvent, FirstState.MOVE);
                     break;
-                case PICKUPSAMPLE:
+                /*case PICKUPSAMPLE:
                     robot.robotDrive.driveBase.holonomicDrive(0.0,0.5,0.0,1.0, firstEvent);
-                    robot.armBase.setMotorPower(-1);
-                    robot.arm.motor.setTargetPosition(-75);
-                    robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.arm.setMotorPower(0.5);
+                    robot.shoulder.setPosition(0);
+                    robot.elbow.setPosition(15);
                     robot.Lclaw.setLogicalPosition(0.5);
                     robot.Rclaw.setLogicalPosition(0);
                     firstTimer.set(1.5, firstEvent);
-                    firstSM.waitForSingleEvent(firstEvent, FirstState.MOVEARMBACK);
+                    firstSM.waitForSingleEvent(firstEvent, FirstState.ROTATEWITHSAMPLE);
                     break;
-                case MOVEARMBACK:
-                    robot.armBase.setMotorPower(1);
+                case ROTATEWITHSAMPLE:
                     robot.robotDrive.driveBase.holonomicDrive(0.0, 0.0, 1.0, 0.8, firstEvent);
-                    robot.armBase.setMotorPower(-1);
                     firstTimer.set(1.0, firstEvent);
                     firstSM.waitForSingleEvent(firstEvent, FirstState.DROPSAMPLE);
                     break;
@@ -271,20 +251,16 @@ public class AutoV1 implements TrcRobot.RobotCommand
                     firstSM.waitForSingleEvent(firstEvent, FirstState.MOVEOUTOFOBSERVATIONZONE);
                     break;
                 case MOVEOUTOFOBSERVATIONZONE:
-                    robot.armBase.setMotorPower(1);
-                    robot.arm.motor.setTargetPosition(0);
-                    robot.arm.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.arm.setMotorPower(0.5);
+                    robot.elbow.setPosition(-110);
                     robot.robotDrive.driveBase.holonomicDrive(0.0, -0.5, 0.0, 1.0, firstEvent);
                     robot.robotDrive.driveBase.holonomicDrive(0.0, 0.0, 1.0, 0.8, firstEvent);
                     firstTimer.set(4.0, firstEvent);
                     firstSM.waitForSingleEvent(firstEvent, FirstState.MOVEINTOOBSERVATIONZONE);
                     break;
                 case MOVEINTOOBSERVATIONZONE:
-                    robot.armBase.setMotorPower(1);
                     robot.robotDrive.driveBase.holonomicDrive(0.0, -0.5, 0.0, 1.0, firstEvent);
                     firstSM.waitForSingleEvent(firstEvent, FirstState.GRABSPECIMEN);
-                    break;
+                    break;*/
                 case DONE:
                     // We are done.
                     cancel();
