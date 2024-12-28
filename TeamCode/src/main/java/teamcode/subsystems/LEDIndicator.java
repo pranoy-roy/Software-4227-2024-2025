@@ -13,7 +13,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN YELLOW EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -36,9 +36,9 @@ import trclib.driverio.TrcRevBlinkin;
 public class LEDIndicator
 {
     // LED pattern names.
-    public static final String RED_BLOB = "RedBlob";
-    public static final String BLUE_BLOB = "BlueBlob";
-    public static final String NO_BLOB = "NoBlob";
+    public static final String RED_SAMPLE = "RedSample";
+    public static final String BLUE_SAMPLE = "BlueSample";
+    public static final String YELLOW_SAMPLE = "YellowSample";
     public static final String APRIL_TAG = "AprilTag";
     public static final String DRIVE_ORIENTATION_FIELD = "FieldMode";
     public static final String DRIVE_ORIENTATION_ROBOT = "RobotMode";
@@ -59,9 +59,9 @@ public class LEDIndicator
             // LED Patterns are sorted in decreasing priority order.
             final TrcGobildaIndicatorLight.Pattern[] ledPatternPriorities = {
                 // Highest priority.
-                new TrcGobildaIndicatorLight.Pattern(RED_BLOB, TrcGobildaIndicatorLight.Color.Red),
-                new TrcGobildaIndicatorLight.Pattern(BLUE_BLOB, TrcGobildaIndicatorLight.Color.Blue),
-                new TrcGobildaIndicatorLight.Pattern(NO_BLOB, TrcGobildaIndicatorLight.Color.Azure),
+                new TrcGobildaIndicatorLight.Pattern(RED_SAMPLE, TrcGobildaIndicatorLight.Color.Red),
+                new TrcGobildaIndicatorLight.Pattern(BLUE_SAMPLE, TrcGobildaIndicatorLight.Color.Blue),
+                new TrcGobildaIndicatorLight.Pattern(YELLOW_SAMPLE, TrcGobildaIndicatorLight.Color.Yellow),
                 new TrcGobildaIndicatorLight.Pattern(APRIL_TAG, TrcGobildaIndicatorLight.Color.Green),
                 new TrcGobildaIndicatorLight.Pattern(DRIVE_ORIENTATION_FIELD, TrcGobildaIndicatorLight.Color.Violet),
                 new TrcGobildaIndicatorLight.Pattern(DRIVE_ORIENTATION_ROBOT, TrcGobildaIndicatorLight.Color.White),
@@ -77,9 +77,9 @@ public class LEDIndicator
             // LED Patterns are sorted in decreasing priority order.
             final TrcRevBlinkin.Pattern[] ledPatternPriorities = {
                 // Highest priority.
-                new TrcRevBlinkin.Pattern(RED_BLOB, TrcRevBlinkin.RevLedPattern.SolidRed),
-                new TrcRevBlinkin.Pattern(BLUE_BLOB, TrcRevBlinkin.RevLedPattern.SolidBlue),
-                new TrcRevBlinkin.Pattern(NO_BLOB, TrcRevBlinkin.RevLedPattern.SolidAqua),
+                new TrcRevBlinkin.Pattern(RED_SAMPLE, TrcRevBlinkin.RevLedPattern.SolidRed),
+                new TrcRevBlinkin.Pattern(BLUE_SAMPLE, TrcRevBlinkin.RevLedPattern.SolidBlue),
+                new TrcRevBlinkin.Pattern(YELLOW_SAMPLE, TrcRevBlinkin.RevLedPattern.SolidYellow),
                 new TrcRevBlinkin.Pattern(APRIL_TAG, TrcRevBlinkin.RevLedPattern.SolidGreen),
                 new TrcRevBlinkin.Pattern(DRIVE_ORIENTATION_FIELD, TrcRevBlinkin.RevLedPattern.SolidViolet),
                 new TrcRevBlinkin.Pattern(DRIVE_ORIENTATION_ROBOT, TrcRevBlinkin.RevLedPattern.SolidWhite),

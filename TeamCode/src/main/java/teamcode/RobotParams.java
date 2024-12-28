@@ -154,14 +154,14 @@ public class RobotParams
         public static final boolean useBlinkinLED               = false;
         public static final boolean useGobildaLED               = false;
         // Vision
-        public static final boolean useVision                   = false;
-        public static final boolean useWebCam                   = false;    // false to use Android phone camera.
+        public static final boolean useVision                   = true;
+        public static final boolean useWebCam                   = true;    // false to use Android phone camera.
         public static final boolean useBuiltinCamBack           = false;    // For Android Phone as Robot Controller.
         public static final boolean tuneColorBlobVision         = false;
         public static final boolean useLimelightVision          = false;
-        public static final boolean useCameraStreamProcessor    = false;
+        public static final boolean useCameraStreamProcessor    = true;
         public static final boolean useAprilTagVision           = false;
-        public static final boolean useColorBlobVision          = false;
+        public static final boolean useColorBlobVision          = true;
         public static final boolean showVisionView              = !inCompetition;
         public static final boolean showVisionStat              = false;
         // Drive Base
@@ -186,11 +186,11 @@ public class RobotParams
             camName = "Webcam 1";
             camImageWidth = 640;
             camImageHeight = 480;
-            camXOffset = 0.0;                   // Inches to the right from robot center
-            camYOffset = 2.0;                   // Inches forward from robot center
-            camZOffset = 9.75;                  // Inches up from the floor
-            camPitch = 15.0;                    // degrees down from horizontal
-            camYaw = 0.0;                       // degrees clockwise from robot front
+            camXOffset = -0.5;              // Inches to the right from robot center
+            camYOffset = 25.5;                   // Inches forward from robot center
+            camZOffset = 2.375;                // Inches up from the floor
+            camYaw = 0.0;                      // degrees clockwise from robot forward
+            camPitch = -98.5;           // degrees up from horizontal
             camRoll = 0.0;
             camPose = new TrcPose3D(camXOffset, camYOffset, camZOffset, camYaw, camPitch, camRoll);
             camOrientation = OpenCvCameraRotation.UPRIGHT;
@@ -260,7 +260,8 @@ public class RobotParams
             camOrientation = OpenCvCameraRotation.UPRIGHT;
             // Homography: cameraRect in pixels, worldRect in inches
             cameraRect = new TrcHomographyMapper.Rectangle(
-                0.0, 120.0,                                             // Camera Top Left
+                0.0, 120.0
+                    ,                                             // Camera Top Left
                 camImageWidth - 1, 120.0,                                // Camera Top Right
                 0.0, camImageHeight - 1,                                // Camera Bottom Left
                 camImageWidth - 1, camImageHeight - 1);                 // Camera Bottom Right
@@ -452,7 +453,7 @@ public class RobotParams
             yDrivePidCoeffs = new PidCoefficients(0.06, 0.0, 0.002, 0.0, 0.0);
             yDrivePidPowerLimit = 1.0;
             yDriveMaxPidRampRate = null;
-            turnPidCoeffs = new PidCoefficients(0.02, 0.0, 0.002, 0.0, 0.0);
+            turnPidCoeffs = new PidCoefficients(0.0275, 0.0, 0.002, 0.0, 0.0);
             turnPidPowerLimit = 0.5;
             turnMaxPidRampRate = null;
             // PID Stall Detection

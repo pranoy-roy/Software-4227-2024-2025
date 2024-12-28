@@ -32,16 +32,20 @@ import ftclib.robotcore.FtcOpMode;
 import ftclib.sensor.FtcRobotBattery;
 import teamcode.subsystems.Elbow;
 import teamcode.subsystems.LEDIndicator;
+import teamcode.subsystems.MaintainHeading;
 import teamcode.subsystems.RobotBase;
+import teamcode.RobotParams.MecanumParams;
 import teamcode.vision.Vision;
 import trclib.motor.TrcMotor;
 import trclib.motor.TrcServo;
 import trclib.pathdrive.TrcPose2D;
 import trclib.robotcore.TrcDbgTrace;
+import trclib.robotcore.TrcPidController;
 import trclib.robotcore.TrcRobot;
 import trclib.sensor.TrcDigitalInput;
 import trclib.timer.TrcTimer;
 import teamcode.subsystems.Shoulder;
+import trclib.pathdrive.TrcPidDrive;
 
 /**
  * This class creates the robot object that consists of sensors, indicators, drive base and all the subsystems.
@@ -59,6 +63,7 @@ public class Robot
     // Robot Drive.
     public FtcRobotDrive.RobotInfo robotInfo;
     public FtcRobotDrive robotDrive;
+    public TrcPidDrive pidDrive;
 
     // Vision subsystems.
     public Vision vision;
@@ -122,7 +127,6 @@ public class Robot
                 Rclaw = new FtcServo("Rclaw");
             }
         }
-
         speak("Init complete");
     }   //Robot
 
@@ -219,17 +223,17 @@ public class Robot
                 vision.setAprilTagVisionEnabled(false);
             }
 
-            if (vision.redBlobVision != null)
-            {
-                globalTracer.traceInfo(moduleName, "Disabling RedBlobVision.");
-                vision.setColorBlobVisionEnabled(Vision.ColorBlobType.RedBlob, false);
-            }
-
-            if (vision.blueBlobVision != null)
-            {
-                globalTracer.traceInfo(moduleName, "Disabling BlueBlobVision.");
-                vision.setColorBlobVisionEnabled(Vision.ColorBlobType.BlueBlob, false);
-            }
+//            if (vision.redBlobVision != null)
+//            {
+//                globalTracer.traceInfo(moduleName, "Disabling RedBlobVision.");
+//                vision.setColorBlobVisionEnabled(Vision.ColorBlobType.RedBlob, false);
+//            }
+//
+//            if (vision.blueBlobVision != null)
+//            {
+//                globalTracer.traceInfo(moduleName, "Disabling BlueBlobVision.");
+//                vision.setColorBlobVisionEnabled(Vision.ColorBlobType.BlueBlob, false);
+//            }
 
             if (vision.limelightVision != null)
             {

@@ -130,7 +130,7 @@ public class FtcTest extends FtcTeleOp
     private double prevVelocity = 0.0;
     // Swerve Steering Calibration.
     private boolean steerCalibrating = false;
-    // Color Blob Vision Turning.
+    // Color Sample Vision Turning.
     private static final double[] COLOR_THRESHOLD_LOW_RANGES = {0.0, 0.0, 0.0};
     private static final double[] COLOR_THRESHOLD_HIGH_RANGES = {255.0, 255.0, 255.0};
     private double[] colorThresholds = null;
@@ -235,16 +235,16 @@ public class FtcTest extends FtcTeleOp
                         robot.vision.setAprilTagVisionEnabled(true);
                     }
 
-                    if (robot.vision.redBlobVision != null)
+                    if (robot.vision.redSampleVision != null)
                     {
-                        robot.globalTracer.traceInfo(moduleName, "Enabling RedBlobVision.");
-                        robot.vision.setColorBlobVisionEnabled(Vision.ColorBlobType.RedBlob, true);
+                        robot.globalTracer.traceInfo(moduleName, "Enabling RedSampleVision.");
+                        //robot.vision.setColorSampleVisionEnabled(Vision.ColorSampleType.RedSample, true);
                     }
 
-                    if (robot.vision.blueBlobVision != null)
+                    if (robot.vision.blueSampleVision != null)
                     {
-                        robot.globalTracer.traceInfo(moduleName, "Enabling BlueBlobVision.");
-                        robot.vision.setColorBlobVisionEnabled(Vision.ColorBlobType.BlueBlob, true);
+                        robot.globalTracer.traceInfo(moduleName, "Enabling BlueSampleVision.");
+                        //robot.vision.setColorSampleVisionEnabled(Vision.ColorSampleType.BlueSample, true);
                     }
 
                     if (robot.vision.limelightVision != null)
@@ -255,13 +255,13 @@ public class FtcTest extends FtcTeleOp
                 }
                 break;
 
-            case TUNE_COLORBLOB_VISION:
+            /*case TUNE_COLORBLOB_VISION:
                 if (robot.vision != null && robot.vision.rawColorBlobVision != null)
                 {
                     robot.globalTracer.traceInfo(moduleName, "Enabling FtcRawEocvVision.");
                     robot.vision.setCameraStreamEnabled(true);
-                    robot.vision.setRawColorBlobVisionEnabled(true);
-                    colorThresholds = robot.vision.getRawColorBlobThresholds();
+                    robot.vision.setRawColorSampleVisionEnabled(true);
+                    colorThresholds = robot.vision.getRawColorSampleThresholds();
                     colorThresholdIndex = 0;
                     colorThresholdMultiplier = 1.0;
                     updateColorThresholds();
@@ -321,7 +321,7 @@ public class FtcTest extends FtcTeleOp
                     robot.robotDrive.driveBase.setFieldPosition(startPose);
                     robot.robotDrive.purePursuitDrive.start(startPose, false, new TrcPose2D(0.0, 48.0, 90.0));
                 }
-                break;
+                break;*/
         }
     }   //startMode
 
@@ -839,7 +839,7 @@ public class FtcTest extends FtcTeleOp
         testMenu.addChoice("Sensors test", Test.SENSORS_TEST, true);
         testMenu.addChoice("Subsystems test", Test.SUBSYSTEMS_TEST, false);
         testMenu.addChoice("Vision test", Test.VISION_TEST, false);
-        testMenu.addChoice("Tune ColorBlob vision", Test.TUNE_COLORBLOB_VISION, false);
+        testMenu.addChoice("Tune ColorSample vision", Test.TUNE_COLORBLOB_VISION, false);
         testMenu.addChoice("Drive speed test", Test.DRIVE_SPEED_TEST, false);
         testMenu.addChoice("Drive motors test", Test.DRIVE_MOTORS_TEST, false);
         testMenu.addChoice("X Timed drive", Test.X_TIMED_DRIVE, false, driveTimeMenu);
@@ -1073,14 +1073,14 @@ public class FtcTest extends FtcTeleOp
                 robot.vision.getDetectedAprilTag(null, lineNum++);
             }
 
-            if (robot.vision.redBlobVision != null)
+            if (robot.vision.redSampleVision != null)
             {
-                robot.vision.getDetectedColorBlob(Vision.ColorBlobType.RedBlob, lineNum++);
+                //robot.vision.getDetectedColorSample(Vision.ColorSampleType.RedSample, lineNum++);
             }
 
-            if (robot.vision.blueBlobVision != null)
+            if (robot.vision.blueSampleVision != null)
             {
-                robot.vision.getDetectedColorBlob(Vision.ColorBlobType.BlueBlob, lineNum++);
+                //robot.vision.getDetectedColorSample(Vision.ColorSampleType.BlueSample, lineNum++);
             }
 
             if (robot.vision.limelightVision != null)

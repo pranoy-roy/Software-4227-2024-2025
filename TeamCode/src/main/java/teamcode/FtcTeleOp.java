@@ -34,6 +34,10 @@ import trclib.pathdrive.TrcPose2D;
 import trclib.robotcore.TrcDbgTrace;
 import trclib.robotcore.TrcRobot;
 import trclib.timer.TrcTimer;
+import teamcode.subsystems.MaintainHeading;
+import teamcode.subsystems.PidDriveParams;
+import trclib.command.CmdPidDrive;
+import teamcode.vision.Vision;
 
 /**
  * This class contains the TeleOp Mode program.
@@ -51,12 +55,17 @@ public class FtcTeleOp extends FtcOpMode
     private boolean driverAltFunc = false;
     private boolean operatorAltFunc = false;
     private boolean relocalizing = false;
-    private boolean manual = false;
+    private boolean manual = true;
     private boolean startPressedAlready = false;
     private TrcPose2D robotFieldPose = null;
+    //private MaintainHeading maintainHeading;
+    private double heading = 0;
 
+    private TrcPose2D pos0 = new TrcPose2D(0, 0,0);
+    private TrcPose2D pos1 = new TrcPose2D(0,24,0);
+    private CmdPidDrive pidDrive;
+    private PidDriveParams pidDriveParams;
 
-    //
     // Implements FtcOpMode abstract method.
     //
 
@@ -73,6 +82,8 @@ public class FtcTeleOp extends FtcOpMode
         robot = new Robot(TrcRobot.getRunMode());
         drivePowerScale = RobotParams.Robot.DRIVE_NORMAL_SCALE;
         turnPowerScale = RobotParams.Robot.TURN_NORMAL_SCALE;
+        //maintainHeading = new MaintainHeading(robot, "MaintainHeading");
+        //maintainHeading.tracer.setTraceLevel(TrcDbgTrace.MsgLevel.DEBUG);
 
         //
         // Open trace log.
@@ -94,8 +105,15 @@ public class FtcTeleOp extends FtcOpMode
         driverGamepad.setLeftStickInverted(false, true);
         operatorGamepad.setRightStickInverted(false, true);
         setDriveOrientation(RobotParams.Robot.DRIVE_ORIENTATION);
+
         robot.elbow.resetPosition();
         robot.shoulder.resetPosition();
+
+        robot.vision.setCameraStreamEnabled(true);
+        robot.vision.setRawColorBlobVisionEnabled(true);
+
+        pidDriveParams = new PidDriveParams(robot);
+        pidDrive = new CmdPidDrive(robot.robotDrive.driveBase, pidDriveParams.getPidDrive(), false);
     }   //robotInit
 
     //
@@ -188,6 +206,13 @@ public class FtcTeleOp extends FtcOpMode
             robot.dashboard.displayPrintf(
                 6, "Arm Base Position: %f",
                 robot.shoulder.getPosition());
+            robot.dashboard.displayPrintf(
+                    7, "Heading: %f",
+                    robot.robotDrive.driveBase.getHeading());
+            robot.dashboard.displayPrintf(9, "Robot Position: " + robot.robotDrive.driveBase.getFieldPosition().toString());
+            robot.vision.getDetectedRawColorBlob(10);
+            robot.vision.getDetectedSample(Vision.SampleType.AnySample, 0.0, 11);
+            pidDrive.cmdPeriodic(2);
 
             //
             // DriveBase subsystem.
@@ -209,12 +234,11 @@ public class FtcTeleOp extends FtcOpMode
 
                     if (robot.robotDrive.driveBase.supportsHolonomicDrive())
                     {
-                        robot.robotDrive.driveBase.holonomicDrive(
-                            null, inputs[0], inputs[1], inputs[2], robot.robotDrive.driveBase.getDriveGyroAngle());
+                        robot.robotDrive.driveBase.holonomicDrive(inputs[0], inputs[1], inputs[2]);
                     }
                     else
                     {
-                        robot.robotDrive.driveBase.arcadeDrive(inputs[1], inputs[2]);
+                        robot.robotDrive.driveBase.arcadeDrive(inputs[0], inputs[1]);
                     }
                     robot.dashboard.displayPrintf(
                         1, "RobotDrive: Power=(%.2f,y=%.2f,rot=%.2f),Mode:%s",
@@ -272,7 +296,7 @@ public class FtcTeleOp extends FtcOpMode
         {
             case A:
                 // Toggle between field or robot oriented driving, only applicable for holonomic drive base.
-                if (driverAltFunc)
+                /*if (driverAltFunc)
                 {
                     if (pressed && robot.robotDrive != null)
                     {
@@ -305,7 +329,7 @@ public class FtcTeleOp extends FtcOpMode
                             setDriveOrientation(TrcDriveBase.DriveOrientation.ROBOT);
                         }
                     }
-                }
+                }*/
                 break;
 
             case B:
@@ -327,16 +351,19 @@ public class FtcTeleOp extends FtcOpMode
                 }
                 break;
             case Y:
+                /*if (pressed) {
+                    heading += 45;
+                }*/
                 break;
 
             case LeftBumper:
-                robot.globalTracer.traceInfo(moduleName, ">>>>> DriverAltFunc=" + pressed);
-                driverAltFunc = pressed;
+                /*robot.globalTracer.traceInfo(moduleName, ">>>>> DriverAltFunc=" + pressed);
+                driverAltFunc = pressed;*/
                 break;
 
             case RightBumper:
                 // Press and hold for slow drive.
-                if (pressed)
+                /*if (pressed)
                 {
                     robot.globalTracer.traceInfo(moduleName, ">>>>> DrivePower slow.");
                     drivePowerScale = RobotParams.Robot.DRIVE_SLOW_SCALE;
@@ -347,17 +374,21 @@ public class FtcTeleOp extends FtcOpMode
                     robot.globalTracer.traceInfo(moduleName, ">>>>> DrivePower normal.");
                     drivePowerScale = RobotParams.Robot.DRIVE_NORMAL_SCALE;
                     turnPowerScale = RobotParams.Robot.TURN_NORMAL_SCALE;
-                }
+                }*/
                 break;
 
             case DpadUp:
+                if (pressed) {
+                    pidDrive.start(0.0, 0.75, null, pos1);
+                }
+                break;
             case DpadDown:
             case DpadLeft:
             case DpadRight:
                 break;
 
             case Back:
-                if (pressed)
+                /*if (pressed)
                 {
                     robot.globalTracer.traceInfo(moduleName, ">>>>> ZeroCalibrate pressed.");
                     robot.cancelAll();
@@ -368,11 +399,11 @@ public class FtcTeleOp extends FtcOpMode
                         robot.globalTracer.traceInfo(moduleName, ">>>>> Set SteerAngle to zero.");
                         ((FtcSwerveDrive) robot.robotDrive).setSteerAngle(0.0, false, false);
                     }
-                }
+                }*/
                 break;
 
             case Start:
-                if (robot.vision != null && robot.vision.aprilTagVision != null && robot.robotDrive != null)
+                /*if (robot.vision != null && robot.vision.aprilTagVision != null && robot.robotDrive != null)
                 {
                     // On press of the button, we will start looking for AprilTag for re-localization.
                     // On release of the button, we will set the robot's field location if we found the AprilTag.
@@ -392,7 +423,7 @@ public class FtcTeleOp extends FtcOpMode
                     {
                         robot.globalTracer.traceInfo(moduleName, ">>>>> Start re-localizing ...");
                     }
-                }
+                }*/
                 break;
         }
     }   //driverButtonEvent
@@ -411,8 +442,8 @@ public class FtcTeleOp extends FtcOpMode
         {
             case Y:
                 if(pressed){
-                    robot.elbow.setPosition(90);
-                    robot.shoulder.setPosition(-68.17);
+                    robot.shoulder.setPosition(-74.98);
+                    robot.elbow.setPosition(0);
                 }
                 break;
             case B:
@@ -429,8 +460,8 @@ public class FtcTeleOp extends FtcOpMode
                 break;
             case A:
                 if(pressed){
-                    robot.elbow.setPosition(0);
-                    robot.shoulder.setPosition(-68.17);
+                    robot.shoulder.setPosition(0);
+                    robot.elbow.setPosition(31.13);
                 }
                 break;
 

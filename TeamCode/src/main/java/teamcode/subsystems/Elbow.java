@@ -47,7 +47,7 @@ public class Elbow
         public static final double ENCODER_CPR                  = 28;
         public static final double GEAR_RATIO                   = 143.06;
         public static final double DEG_SCALE                    = 360.0 / (ENCODER_CPR * GEAR_RATIO);
-        public static final double POS_OFFSET                   = -112.43;
+        public static final double POS_OFFSET                   = -117.79;
         public static final double ZERO_OFFSET                  = 0.0;
         public static final double POWER_LIMIT                  = 1.0;
         public static final double ZERO_CAL_POWER               = -0.2;
@@ -79,6 +79,7 @@ public class Elbow
 
     private final Robot robot;
     public final TrcMotor elbow;
+    private TrcPidController elbowPID;
 
     /**
      * Constructor: Creates an instance of the object.
@@ -94,6 +95,8 @@ public class Elbow
         elbow.setSoftwarePidEnabled(true);
         elbow.setPositionPidParameters(Params.posPidCoeffs, Params.POS_PID_TOLERANCE);
         elbow.setPositionPidPowerComp(this::getElbowPowerComp);
+        elbowPID = elbow.getPositionPidController();
+        elbowPID.setNoOscillation(true);
         elbow.setTraceLevel(TrcDbgTrace.MsgLevel.INFO, false, false, null);
     }   //Elbow
 

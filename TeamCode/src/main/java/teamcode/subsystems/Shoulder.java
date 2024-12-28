@@ -50,7 +50,7 @@ public class Shoulder
         public static final double ENCODER_CPR                  = 28;
         public static final double GEAR_RATIO                   = 79.05;
         public static final double DEG_SCALE                    = 360.0 / (ENCODER_CPR * GEAR_RATIO);
-        public static final double POS_OFFSET                   = -68.17;
+        public static final double POS_OFFSET                   = -80.5;
         public static final double ZERO_OFFSET                  = 0.0;
         public static final double POWER_LIMIT                  = 1.0;
         public static final double ZERO_CAL_POWER               = -0.2;
@@ -82,6 +82,7 @@ public class Shoulder
 
     private final Robot robot;
     public final TrcMotor shoulder;
+    private TrcPidController shoulderPID;
 
     /**
      * Constructor: Creates an instance of the object.
@@ -97,6 +98,8 @@ public class Shoulder
         shoulder.setSoftwarePidEnabled(true);
         shoulder.setPositionPidParameters(Params.posPidCoeffs, Params.POS_PID_TOLERANCE);
         shoulder.setPositionPidPowerComp(this::getShoulderPowerComp);
+        shoulderPID = shoulder.getPositionPidController();
+        shoulderPID.setNoOscillation(true);
         shoulder.setTraceLevel(TrcDbgTrace.MsgLevel.INFO, false, false, null);
     }   //Shoulder
 
@@ -118,9 +121,9 @@ public class Shoulder
      */
     private double getShoulderPowerComp(double currPower)
     {
-        /*if (robot.extender != null)
+        if (robot.elbow != null)
         {
-            double extenderLength = robot.extender.getPosition();
+            double extenderLength = robot.elbow.getPosition();
             double extenderAngleRadian =
                 Math.toRadians(shoulder.getPosition()) - Math.atan(Params.PIVOT_OFFSET/extenderLength);
             // Calculate extender floor distance from the pivot point.
@@ -134,8 +137,7 @@ public class Shoulder
             // We should not be calling gravity comp if extender has not been created.
             // But to avoid NullPointerException just in case, return 0.0 gravity comp power.
             return 0.0;
-        }*/
-        return 0.0;
+        }
     }   //getShoulderPowerComp
 
 }   //class Shoulder

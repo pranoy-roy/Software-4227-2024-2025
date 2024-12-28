@@ -161,7 +161,7 @@ public class AutoV1 implements TrcRobot.RobotCommand
                     robot.Lclaw.setLogicalPosition(0.5);
                     robot.Rclaw.setLogicalPosition(0);
                     robot.shoulder.setPosition(-75);
-                    robot.elbow.setPosition(60);
+                    robot.elbow.setPosition(45);
                     firstTimer.set(1.5, firstEvent);
                     firstSM.waitForSingleEvent(firstEvent, FirstState.CLIP);
                     break;
