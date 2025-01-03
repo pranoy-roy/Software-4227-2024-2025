@@ -33,8 +33,6 @@ import trclib.robotcore.TrcRobot;
 import trclib.robotcore.TrcTaskMgr;
 import trclib.sensor.TrcRobotBattery;
 import trclib.timer.TrcTimer;
-import trclib.dataprocessor.TrcWarpSpace;
-
 /**
  * This class creates the MaintainHeading subsystem of the Extender Arm.
  */
@@ -49,7 +47,6 @@ public class MaintainHeading {
 
     private final Robot robot;
     public final TrcDbgTrace tracer;
-    private TrcWarpSpace headingWarp;
     private TrcPidController headingPID;
     private double x, y;
 
@@ -60,7 +57,6 @@ public class MaintainHeading {
         this.robot = robot;
         this.tracer = new TrcDbgTrace();
         headingPID = new TrcPidController("headingPID", Params.posPidCoeffs, this::getHeading);
-        headingWarp = new TrcWarpSpace("headingWarp", 0.0, 360.0);
         headingPID.setInverted(true);
         headingPID.setTraceLevel(TrcDbgTrace.MsgLevel.DEBUG,true, null);
         TrcTaskMgr.TaskObject headingPidCtrlTaskObj = TrcTaskMgr.createTask(instanceName + ".pidCtrlTask", this::headingPidCtrlTask);

@@ -47,7 +47,7 @@ public class Elbow
         public static final double ENCODER_CPR                  = 28;
         public static final double GEAR_RATIO                   = 143.06;
         public static final double DEG_SCALE                    = 360.0 / (ENCODER_CPR * GEAR_RATIO);
-        public static final double POS_OFFSET                   = -117.79;
+        public static final double POS_OFFSET                   = -130.86;
         public static final double ZERO_OFFSET                  = 0.0;
         public static final double POWER_LIMIT                  = 1.0;
         public static final double ZERO_CAL_POWER               = -0.2;

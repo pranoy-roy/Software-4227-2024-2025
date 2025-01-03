@@ -26,7 +26,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import java.util.Locale;
 
-import ftclib.drivebase.FtcSwerveDrive;
 import ftclib.driverio.FtcGamepad;
 import ftclib.robotcore.FtcOpMode;
 import trclib.drivebase.TrcDriveBase;
@@ -34,10 +33,6 @@ import trclib.pathdrive.TrcPose2D;
 import trclib.robotcore.TrcDbgTrace;
 import trclib.robotcore.TrcRobot;
 import trclib.timer.TrcTimer;
-import teamcode.subsystems.MaintainHeading;
-import teamcode.subsystems.PidDriveParams;
-import trclib.command.CmdPidDrive;
-import teamcode.vision.Vision;
 
 /**
  * This class contains the TeleOp Mode program.
@@ -58,14 +53,6 @@ public class FtcTeleOp extends FtcOpMode
     private boolean manual = true;
     private boolean startPressedAlready = false;
     private TrcPose2D robotFieldPose = null;
-    //private MaintainHeading maintainHeading;
-    private double heading = 0;
-
-    private TrcPose2D pos0 = new TrcPose2D(0, 0,0);
-    private TrcPose2D pos1 = new TrcPose2D(0,24,0);
-    private CmdPidDrive pidDrive;
-    private PidDriveParams pidDriveParams;
-
     // Implements FtcOpMode abstract method.
     //
 
@@ -82,8 +69,6 @@ public class FtcTeleOp extends FtcOpMode
         robot = new Robot(TrcRobot.getRunMode());
         drivePowerScale = RobotParams.Robot.DRIVE_NORMAL_SCALE;
         turnPowerScale = RobotParams.Robot.TURN_NORMAL_SCALE;
-        //maintainHeading = new MaintainHeading(robot, "MaintainHeading");
-        //maintainHeading.tracer.setTraceLevel(TrcDbgTrace.MsgLevel.DEBUG);
 
         //
         // Open trace log.
@@ -108,12 +93,6 @@ public class FtcTeleOp extends FtcOpMode
 
         robot.elbow.resetPosition();
         robot.shoulder.resetPosition();
-
-        robot.vision.setCameraStreamEnabled(true);
-        robot.vision.setRawColorBlobVisionEnabled(true);
-
-        pidDriveParams = new PidDriveParams(robot);
-        pidDrive = new CmdPidDrive(robot.robotDrive.driveBase, pidDriveParams.getPidDrive(), false);
     }   //robotInit
 
     //
@@ -196,10 +175,11 @@ public class FtcTeleOp extends FtcOpMode
                 robot.elbow.setPower(0.5*operatorGamepad.getRightStickY(false));
                 robot.shoulder.setPower(-0.5*operatorGamepad.getLeftStickY(false));
             }
-            if (!manual) {
+            else {
                 robot.elbow.setSoftwarePidEnabled(true);
                 robot.shoulder.setSoftwarePidEnabled(true);
             }
+
             robot.dashboard.displayPrintf(
                     5, "Arm Position: %f",
                     robot.elbow.getPosition());
@@ -210,10 +190,6 @@ public class FtcTeleOp extends FtcOpMode
                     7, "Heading: %f",
                     robot.robotDrive.driveBase.getHeading());
             robot.dashboard.displayPrintf(9, "Robot Position: " + robot.robotDrive.driveBase.getFieldPosition().toString());
-            robot.vision.getDetectedRawColorBlob(10);
-            robot.vision.getDetectedSample(Vision.SampleType.AnySample, 0.0, 11);
-            pidDrive.cmdPeriodic(2);
-
             //
             // DriveBase subsystem.
             //
@@ -296,7 +272,7 @@ public class FtcTeleOp extends FtcOpMode
         {
             case A:
                 // Toggle between field or robot oriented driving, only applicable for holonomic drive base.
-                /*if (driverAltFunc)
+                if (driverAltFunc)
                 {
                     if (pressed && robot.robotDrive != null)
                     {
@@ -329,7 +305,7 @@ public class FtcTeleOp extends FtcOpMode
                             setDriveOrientation(TrcDriveBase.DriveOrientation.ROBOT);
                         }
                     }
-                }*/
+                }
                 break;
 
             case B:
@@ -351,19 +327,15 @@ public class FtcTeleOp extends FtcOpMode
                 }
                 break;
             case Y:
-                /*if (pressed) {
-                    heading += 45;
-                }*/
-                break;
 
             case LeftBumper:
-                /*robot.globalTracer.traceInfo(moduleName, ">>>>> DriverAltFunc=" + pressed);
-                driverAltFunc = pressed;*/
+                robot.globalTracer.traceInfo(moduleName, ">>>>> DriverAltFunc=" + pressed);
+                driverAltFunc = pressed;
                 break;
 
             case RightBumper:
                 // Press and hold for slow drive.
-                /*if (pressed)
+                if (pressed)
                 {
                     robot.globalTracer.traceInfo(moduleName, ">>>>> DrivePower slow.");
                     drivePowerScale = RobotParams.Robot.DRIVE_SLOW_SCALE;
@@ -374,13 +346,10 @@ public class FtcTeleOp extends FtcOpMode
                     robot.globalTracer.traceInfo(moduleName, ">>>>> DrivePower normal.");
                     drivePowerScale = RobotParams.Robot.DRIVE_NORMAL_SCALE;
                     turnPowerScale = RobotParams.Robot.TURN_NORMAL_SCALE;
-                }*/
+                }
                 break;
 
             case DpadUp:
-                if (pressed) {
-                    pidDrive.start(0.0, 0.75, null, pos1);
-                }
                 break;
             case DpadDown:
             case DpadLeft:
@@ -403,7 +372,7 @@ public class FtcTeleOp extends FtcOpMode
                 break;
 
             case Start:
-                /*if (robot.vision != null && robot.vision.aprilTagVision != null && robot.robotDrive != null)
+                if (robot.vision != null && robot.vision.aprilTagVision != null && robot.robotDrive != null)
                 {
                     // On press of the button, we will start looking for AprilTag for re-localization.
                     // On release of the button, we will set the robot's field location if we found the AprilTag.
@@ -423,7 +392,7 @@ public class FtcTeleOp extends FtcOpMode
                     {
                         robot.globalTracer.traceInfo(moduleName, ">>>>> Start re-localizing ...");
                     }
-                }*/
+                }
                 break;
         }
     }   //driverButtonEvent
@@ -442,7 +411,7 @@ public class FtcTeleOp extends FtcOpMode
         {
             case Y:
                 if(pressed){
-                    robot.shoulder.setPosition(-74.98);
+                    robot.shoulder.setPosition(-83.6);
                     robot.elbow.setPosition(0);
                 }
                 break;
@@ -461,7 +430,7 @@ public class FtcTeleOp extends FtcOpMode
             case A:
                 if(pressed){
                     robot.shoulder.setPosition(0);
-                    robot.elbow.setPosition(31.13);
+                    robot.elbow.setPosition(22.82);
                 }
                 break;
 

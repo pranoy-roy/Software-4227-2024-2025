@@ -50,7 +50,7 @@ public class Shoulder
         public static final double ENCODER_CPR                  = 28;
         public static final double GEAR_RATIO                   = 79.05;
         public static final double DEG_SCALE                    = 360.0 / (ENCODER_CPR * GEAR_RATIO);
-        public static final double POS_OFFSET                   = -80.5;
+        public static final double POS_OFFSET                   = -83.6;
         public static final double ZERO_OFFSET                  = 0.0;
         public static final double POWER_LIMIT                  = 1.0;
         public static final double ZERO_CAL_POWER               = -0.2;
