@@ -178,6 +178,8 @@ public class FtcTeleOp extends FtcOpMode
             else {
                 robot.elbow.setSoftwarePidEnabled(true);
                 robot.shoulder.setSoftwarePidEnabled(true);
+                robot.higherWinch.setPower(operatorGamepad.getRightStickY(false));
+                robot.lowerWinch.setPower(operatorGamepad.getLeftStickY(false));
             }
 
             robot.dashboard.displayPrintf(
