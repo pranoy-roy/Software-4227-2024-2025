@@ -163,6 +163,10 @@ public class AutoV1 implements TrcRobot.RobotCommand
                 case START:
                     if (autoChoices.delay > 0.0) {
                         robot.globalTracer.traceInfo(moduleName, "***** Do delay " + autoChoices.delay + "s.");
+                        robot.LClaw.setLogicalPosition(0.5);
+                        robot.RClaw.setLogicalPosition(0);
+                        robot.elbow.setPosition(-130.86);
+                        robot.shoulder.setPosition(-83.6);
                         firstTimer.set(autoChoices.delay, firstEvent);
                         firstSM.waitForSingleEvent(firstEvent, FirstState.MOVE);
                     }
