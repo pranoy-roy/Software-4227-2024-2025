@@ -27,20 +27,18 @@ import androidx.annotation.NonNull;
 import ftclib.drivebase.FtcRobotDrive;
 import ftclib.driverio.FtcDashboard;
 import ftclib.driverio.FtcMatchInfo;
+import ftclib.motor.FtcDcMotor;
 import ftclib.motor.FtcServo;
 import ftclib.robotcore.FtcOpMode;
 import ftclib.sensor.FtcRobotBattery;
 import teamcode.subsystems.Elbow;
 import teamcode.subsystems.LEDIndicator;
-import teamcode.subsystems.MaintainHeading;
 import teamcode.subsystems.RobotBase;
-import teamcode.RobotParams.MecanumParams;
 import teamcode.vision.Vision;
 import trclib.motor.TrcMotor;
 import trclib.motor.TrcServo;
 import trclib.pathdrive.TrcPose2D;
 import trclib.robotcore.TrcDbgTrace;
-import trclib.robotcore.TrcPidController;
 import trclib.robotcore.TrcRobot;
 import trclib.sensor.TrcDigitalInput;
 import trclib.timer.TrcTimer;
@@ -73,8 +71,10 @@ public class Robot
     // Subsystems
     public TrcMotor elbow;
     public TrcMotor shoulder;
-    public FtcServo Lclaw;
-    public FtcServo Rclaw;
+    public FtcServo LClaw;
+    public FtcServo RClaw;
+    public FtcDcMotor lowerWinch;
+    public FtcDcMotor higherWinch;
     /**
      * Constructor: Create an instance of the object.
      *
@@ -123,8 +123,10 @@ public class Robot
             {
                 elbow = new Elbow(this).getMotor();
                 shoulder = new Shoulder(this).getMotor();
-                Lclaw = new FtcServo("Lclaw");
-                Rclaw = new FtcServo("Rclaw");
+                LClaw = new FtcServo("Lclaw");
+                RClaw = new FtcServo("Rclaw");
+                lowerWinch = new FtcDcMotor("lowerWinch");
+                higherWinch = new FtcDcMotor("higherWinch");
             }
         }
         speak("Init complete");

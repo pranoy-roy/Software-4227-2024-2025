@@ -159,8 +159,8 @@ public class FtcAuto extends FtcOpMode
                 break;
             case AutoV1:
                 autoCommand = new AutoV1(robot, autoChoices);
-//              robot.Lclaw.setLogicalPosition(0.5);
-//              robot.Rclaw.setLogicalPosition(0);
+                robot.LClaw.setLogicalPosition(0.5);
+                robot.RClaw.setLogicalPosition(0);
                 break;
             case DO_NOTHING:
             default:
