@@ -24,6 +24,8 @@ package teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 import java.util.Locale;
 
 import ftclib.driverio.FtcGamepad;
@@ -91,7 +93,7 @@ public class FtcTeleOp extends FtcOpMode
         operatorGamepad.setRightStickInverted(false, true);
         setDriveOrientation(RobotParams.Robot.DRIVE_ORIENTATION);
 
-        robot.elbow.resetPosition();
+        robot.linearSlides.resetPosition();
         robot.shoulder.resetPosition();
     }   //robotInit
 
@@ -170,27 +172,21 @@ public class FtcTeleOp extends FtcOpMode
         if (slowPeriodicLoop)
         {
             if (manual) {
-                robot.elbow.setSoftwarePidEnabled(false);
+                robot.linearSlides.setSoftwarePidEnabled(false);
                 robot.shoulder.setSoftwarePidEnabled(false);
-                robot.elbow.setPower(0.5*operatorGamepad.getRightStickY(false));
-                robot.shoulder.setPower(-0.5*operatorGamepad.getLeftStickY(false));
+                robot.linearSlides.setPower(-0.5*operatorGamepad.getLeftStickY(false));
+                robot.shoulder.setPower(0.5*operatorGamepad.getLeftStickY(false));
             }
             else {
-                robot.elbow.setSoftwarePidEnabled(true);
-                robot.shoulder.setSoftwarePidEnabled(true);
-                robot.higherWinch.setPower(operatorGamepad.getRightStickY(false));
-                robot.lowerWinch.setPower(operatorGamepad.getLeftStickY(false));
+                //robot.linearSlides.setSoftwarePidEnabled(true);
+                //robot.shoulder.setSoftwarePidEnabled(true);
             }
 
             robot.dashboard.displayPrintf(
-                    5, "Arm Position: %f",
-                    robot.elbow.getPosition());
-            robot.dashboard.displayPrintf(
-                6, "Arm Base Position: %f",
-                robot.shoulder.getPosition());
-            robot.dashboard.displayPrintf(
                     7, "Heading: %f",
                     robot.robotDrive.driveBase.getHeading());
+            robot.dashboard.displayPrintf(8, "Right X Distance: %f, Left X Distance: %f, Front Y Distance: %f, Back Y Distance: %f",
+                    robot.rightX.sensor.getDistance(DistanceUnit.INCH), robot.leftX.sensor.getDistance(DistanceUnit.INCH), robot.frontY.sensor.getDistance(DistanceUnit.INCH), robot.backY.sensor.getDistance(DistanceUnit.INCH));
             robot.dashboard.displayPrintf(9, "Robot Position: " + robot.robotDrive.driveBase.getFieldPosition().toString());
             //
             // DriveBase subsystem.
@@ -202,7 +198,7 @@ public class FtcTeleOp extends FtcOpMode
                 {
                     if (robotFieldPose == null)
                     {
-                        robotFieldPose = robot.vision.getRobotFieldPose();
+
                     }
                 }
                 else
@@ -212,10 +208,12 @@ public class FtcTeleOp extends FtcOpMode
 
                     if (robot.robotDrive.driveBase.supportsHolonomicDrive())
                     {
-                        robot.robotDrive.driveBase.holonomicDrive(inputs[0], inputs[1], inputs[2]);
+                        robot.robotDrive.driveBase.holonomicDrive(0.75*inputs[0], 0.75*inputs[1], inputs[2]);
                     }
                     else
                     {
+
+
                         robot.robotDrive.driveBase.arcadeDrive(inputs[0], inputs[1]);
                     }
                     robot.dashboard.displayPrintf(
@@ -374,27 +372,6 @@ public class FtcTeleOp extends FtcOpMode
                 break;
 
             case Start:
-                if (robot.vision != null && robot.vision.aprilTagVision != null && robot.robotDrive != null)
-                {
-                    // On press of the button, we will start looking for AprilTag for re-localization.
-                    // On release of the button, we will set the robot's field location if we found the AprilTag.
-                    relocalizing = pressed;
-                    if (!pressed)
-                    {
-                        if (robotFieldPose != null)
-                        {
-                            // Vision found an AprilTag, set the new robot field location.
-                            robot.globalTracer.traceInfo(
-                                moduleName, ">>>>> Finish re-localizing: pose=" + robotFieldPose);
-                            robot.robotDrive.driveBase.setFieldPosition(robotFieldPose, false);
-                            robotFieldPose = null;
-                        }
-                    }
-                    else
-                    {
-                        robot.globalTracer.traceInfo(moduleName, ">>>>> Start re-localizing ...");
-                    }
-                }
                 break;
         }
     }   //driverButtonEvent
@@ -412,49 +389,68 @@ public class FtcTeleOp extends FtcOpMode
         switch (button)
         {
             case Y:
-                if(pressed){
-                    robot.shoulder.setPosition(-83.6);
-                    robot.elbow.setPosition(0);
+                if (pressed) {
+                    //robot.wrist.setLogicalPosition(); facing down
                 }
                 break;
             case B:
                 if(pressed){
-                    robot.LClaw.setLogicalPosition(0.5);
-                    robot.RClaw.setLogicalPosition(0);
+                    //robot.LClaw.setLogicalPosition(0.5);
+                    //robot.RClaw.setLogicalPosition(0);
                 }
                 break;
             case X:
                 if(pressed){
-                    robot.LClaw.setLogicalPosition(0);
-                    robot.RClaw.setLogicalPosition(0.5);
+                    //robot.LClaw.setLogicalPosition(0);
+                    //robot.RClaw.setLogicalPosition(0.5);
                 }
                 break;
             case A:
-                if(pressed){
-                    robot.shoulder.setPosition(0);
-                    robot.elbow.setPosition(22.82);
-                }
                 break;
 
             case LeftBumper:
-                robot.globalTracer.traceInfo(moduleName, ">>>>> OperatorAltFunc=" + pressed);
-                operatorAltFunc = pressed;
+                if(pressed){
+                    robot.higherWinch.setMotorPower(1);
+                }
                 break;
 
             case RightBumper:
-
+                if(pressed) {
+                    robot.lowerWinch.setMotorPower(-1);
+                    robot.higherWinch.setMotorPower(0);
+                }
+                break;
             case DpadUp:
+                if (pressed) {
+                    //score high bucket
+                    //robot.linearSlides.setPosition(, true);
+                    //robot.shoulder.setPosition(0, true);
+                    //robot.wrist.setLogicalPosition();
+                }
+                break;
             case DpadDown:
+                if (pressed) {
+                    //score high chamber
+                    //robot.linearSlides.setPosition(, true);
+                    //robot.shoulder.setPosition(0, true);
+                    //robot.wrist.setLogicalPosition();
+                }
+                break;
             case DpadLeft:
+                if (pressed) {
+                    //pick up specimen
+                    //robot.linearSlides.setPosition(, true);
+                    //robot.shoulder.setPosition(0, true);
+                    //robot.wrist.setLogicalPosition();
+                }
+                break;
             case DpadRight:
 
             case Back:
                 if (pressed)
                 {
-                    // Zero calibrate all subsystems (arm, elevator and turret).
-                    robot.globalTracer.traceInfo(moduleName, ">>>>> ZeroCalibrate pressed.");
-                    robot.cancelAll();
-                    robot.zeroCalibrate(moduleName);
+                    robot.higherWinch.setMotorPower(-1);
+                    robot.lowerWinch.setMotorPower(1);
                 }
                 break;
 

@@ -12,13 +12,11 @@ public class PidDrive {
     private final Robot robot;
     private TrcPidDrive pidDrive;
     private TrcPidController.PidCoefficients xPidCoeffs = new
-            TrcPidController.PidCoefficients(0.25, 0.0, 0.005, 0.0, 0.0);
+            TrcPidController.PidCoefficients(0.05, 0.0, 0.002, 0.0, 0.0);
     private TrcPidController.PidCoefficients yPidCoeffs = new
-            TrcPidController.PidCoefficients(0.25, 0.0, 0.002, 0.0, 0.0);
+            TrcPidController.PidCoefficients(0.05, 0.0, 0.002, 0.0, 0.0);
     private TrcPidController.PidCoefficients turnPidCoeffs = new
             TrcPidController.PidCoefficients(0.0275, 0.0, 0.002, 0.0, 0.0);
-    //private TrcEvent notifyEvent = null;
-
     public PidDrive(Robot robot) {
         this.robot = robot;
         pidDrive = new TrcPidDrive("pidDrive", robot.robotDrive.driveBase,
@@ -34,28 +32,14 @@ public class PidDrive {
         pidDrive.getTurnPidCtrl().setOutputLimit(0.8);
 
         pidDrive.getTurnPidCtrl().setInverted(true);
-
-        pidDrive.getXPidCtrl().setAbsoluteSetPoint(true);
-        pidDrive.getYPidCtrl().setAbsoluteSetPoint(true);
         pidDrive.getTurnPidCtrl().setAbsoluteSetPoint(true);
 
         pidDrive.setTraceLevel(TrcDbgTrace.MsgLevel.DEBUG, true, true, true);
     }
-
     public void setPidDrive(TrcPose2D pose, TrcEvent event) {
-        //this.notifyEvent = event;
         pose.x *= 1.31 * Math.pow(0.995479, ((pose.x/12) - 1));
         pose.y *= 1.25 * Math.pow(0.929782, ((pose.y/12) - 1));
         pidDrive.setAbsoluteTarget(pose, false, event);
-
-        /*if (notifyEvent != null) {
-            notifyEvent.signal();
-            notifyEvent = null;
-        }*/
-    }
-
-    public void resetPosition() {
-        pidDrive.setAbsolutePose(new TrcPose2D(0, 0, 0));
     }
 
     private double getX() {

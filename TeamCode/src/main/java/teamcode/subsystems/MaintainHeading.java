@@ -22,17 +22,12 @@
 
 package teamcode.subsystems;
 
-import ftclib.motor.FtcMotorActuator;
 import teamcode.Robot;
-import trclib.dataprocessor.TrcUtil;
-import trclib.motor.TrcMotor;
 import trclib.robotcore.TrcDbgTrace;
-import trclib.robotcore.TrcEvent;
 import trclib.robotcore.TrcPidController;
 import trclib.robotcore.TrcRobot;
 import trclib.robotcore.TrcTaskMgr;
-import trclib.sensor.TrcRobotBattery;
-import trclib.timer.TrcTimer;
+
 /**
  * This class creates the MaintainHeading subsystem of the Extender Arm.
  */

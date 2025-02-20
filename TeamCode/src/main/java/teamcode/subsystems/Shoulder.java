@@ -1,30 +1,31 @@
+
 /*
- * Copyright (c) 2024 Titan Robotics Club (http://www.titanrobotics.com)
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+* Copyright (c) 2024 Titan Robotics Club (http://www.titanrobotics.com)
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*/
 
 package teamcode.subsystems;
 
 import ftclib.motor.FtcMotorActuator;
 import teamcode.Robot;
-import teamcode.subsystems.Elbow;
+import teamcode.subsystems.LinearSlides;
 import teamcode.RobotParams;
 import trclib.dataprocessor.TrcUtil;
 import trclib.motor.TrcMotor;
@@ -75,9 +76,9 @@ public class Shoulder
         public static final double POS_PRESET_TOLERANCE         = 10.0;
 
         public static final TrcPidController.PidCoefficients posPidCoeffs =
-            new TrcPidController.PidCoefficients(0.05, 0.005, 0.002, 0.0, 0.0);
+                new TrcPidController.PidCoefficients(0.05, 0.005, 0.002, 0.0, 0.0);
         public static final double POS_PID_TOLERANCE            = 3.0;
-        public static final double GRAVITY_COMP_MAX_POWER       = 0.2/Elbow.Params.POS_OFFSET;
+        public static final double GRAVITY_COMP_MAX_POWER       = 0.2/LinearSlides.Params.POS_OFFSET;
     }   //class Params
 
     private final Robot robot;
@@ -91,9 +92,9 @@ public class Shoulder
     {
         this.robot = robot;
         FtcMotorActuator.Params shoulderParams = new FtcMotorActuator.Params()
-            .setPrimaryMotor(Params.PRIMARY_MOTOR_NAME, Params.PRIMARY_MOTOR_TYPE, Params.PRIMARY_MOTOR_INVERTED)
-            .setPositionScaleAndOffset(Params.DEG_SCALE, Params.POS_OFFSET, Params.ZERO_OFFSET)
-            .setPositionPresets(Params.POS_PRESET_TOLERANCE, Params.posPresets);
+                .setPrimaryMotor(Params.PRIMARY_MOTOR_NAME, Params.PRIMARY_MOTOR_TYPE, Params.PRIMARY_MOTOR_INVERTED)
+                .setPositionScaleAndOffset(Params.DEG_SCALE, Params.POS_OFFSET, Params.ZERO_OFFSET)
+                .setPositionPresets(Params.POS_PRESET_TOLERANCE, Params.posPresets);
         shoulder = new FtcMotorActuator(shoulderParams).getMotor();
         shoulder.setSoftwarePidEnabled(true);
         shoulder.setPositionPidParameters(Params.posPidCoeffs, Params.POS_PID_TOLERANCE);
@@ -121,14 +122,14 @@ public class Shoulder
      */
     private double getShoulderPowerComp(double currPower)
     {
-        if (robot.elbow != null)
+        /*if (robot.linearSlides != null)
         {
-            double extenderLength = robot.elbow.getPosition();
+            double extenderLength = robot.linearSlides.getPosition();
             double extenderAngleRadian =
-                Math.toRadians(shoulder.getPosition()) - Math.atan(Params.PIVOT_OFFSET/extenderLength);
+                    Math.toRadians(shoulder.getPosition()) - Math.atan(Params.PIVOT_OFFSET/extenderLength);
             // Calculate extender floor distance from the pivot point.
             double extenderFloorDistanceFromPivot =
-                TrcUtil.magnitude(Params.PIVOT_OFFSET, extenderLength) * Math.cos(extenderAngleRadian);
+                    TrcUtil.magnitude(Params.PIVOT_OFFSET, extenderLength) * Math.cos(extenderAngleRadian);
             // Extender angle is zero horizontal.
             return Params.GRAVITY_COMP_MAX_POWER * extenderFloorDistanceFromPivot;
         }
@@ -137,7 +138,8 @@ public class Shoulder
             // We should not be calling gravity comp if extender has not been created.
             // But to avoid NullPointerException just in case, return 0.0 gravity comp power.
             return 0.0;
-        }
+        }*/
+        return 0.0;
     }   //getShoulderPowerComp
 
 }   //class Shoulder

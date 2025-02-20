@@ -29,16 +29,16 @@ import trclib.robotcore.TrcDbgTrace;
 import trclib.robotcore.TrcPidController;
 
 /**
- * This class creates the Elbow subsystem of the Extender Arm.
+ * This class creates the LinearSlides subsystem of the Extender Arm.
  */
-public class Elbow
+public class LinearSlides
 {
     /**
-     * This class contains Elbow subsystem constants and parameters.
+     * This class contains LinearSlides subsystem constants and parameters.
      */
     public static class Params
     {
-        public static final String SUBSYSTEM_NAME               = "Elbow";
+        public static final String SUBSYSTEM_NAME               = "LinearSlides";
 
         public static final String PRIMARY_MOTOR_NAME           = SUBSYSTEM_NAME + ".primary";
         public static final FtcMotorActuator.MotorType PRIMARY_MOTOR_TYPE = FtcMotorActuator.MotorType.DcMotor;
@@ -78,51 +78,51 @@ public class Elbow
     }   //class Params
 
     private final Robot robot;
-    public final TrcMotor elbow;
-    private TrcPidController elbowPID;
+    public final TrcMotor linearSlides;
+    private TrcPidController linearSlidesPID;
 
     /**
      * Constructor: Creates an instance of the object.
      */
-    public Elbow(Robot robot)
+    public LinearSlides(Robot robot)
     {
         this.robot = robot;
-        FtcMotorActuator.Params elbowParams = new FtcMotorActuator.Params()
+        FtcMotorActuator.Params LinearSlidesParams = new FtcMotorActuator.Params()
             .setPrimaryMotor(Params.PRIMARY_MOTOR_NAME, Params.PRIMARY_MOTOR_TYPE, Params.PRIMARY_MOTOR_INVERTED)
             .setPositionScaleAndOffset(Params.DEG_SCALE, Params.POS_OFFSET, Params.ZERO_OFFSET)
             .setPositionPresets(Params.POS_PRESET_TOLERANCE, Params.posPresets);
-        elbow = new FtcMotorActuator(elbowParams).getMotor();
-        elbow.setSoftwarePidEnabled(true);
-        elbow.setPositionPidParameters(Params.posPidCoeffs, Params.POS_PID_TOLERANCE);
-        elbow.setPositionPidPowerComp(this::getElbowPowerComp);
-        elbowPID = elbow.getPositionPidController();
-        elbowPID.setNoOscillation(true);
-        elbow.setTraceLevel(TrcDbgTrace.MsgLevel.INFO, false, false, null);
-    }   //Elbow
+        linearSlides = new FtcMotorActuator(LinearSlidesParams).getMotor();
+        linearSlides.setSoftwarePidEnabled(true);
+        linearSlides.setPositionPidParameters(Params.posPidCoeffs, Params.POS_PID_TOLERANCE);
+        linearSlides.setPositionPidPowerComp(this::getLinearSlidesPowerComp);
+        linearSlidesPID = linearSlides.getPositionPidController();
+        linearSlidesPID.setNoOscillation(true);
+        linearSlides.setTraceLevel(TrcDbgTrace.MsgLevel.INFO, false, false, null);
+    }   //LinearSlides
 
     /**
-     * This method returns the created elbow motor.
+     * This method returns the created LinearSlides motor.
      *
-     * @return created elbow motor.
+     * @return created LinearSlides motor.
      */
     public TrcMotor getMotor()
     {
-        return elbow;
+        return linearSlides;
     }   //getMotor
 
     /**
-     * This method is called to compute the power compensation to counteract gravity on the Elbow.
+     * This method is called to compute the power compensation to counteract gravity on the LinearSlides.
      *
      * @param currPower specifies the current motor power (not used).
      * @return gravity compensation for the arm.
      */
-    private double getElbowPowerComp(double currPower)
+    private double getLinearSlidesPowerComp(double currPower)
     {
         /*if (robot.extender != null)
         {
             double extenderLength = robot.extender.getPosition();
             double extenderAngleRadian =
-                Math.toRadians(elbow.getPosition()) - Math.atan(Params.PIVOT_OFFSET/extenderLength);
+                Math.toRadians(LinearSlides.getPosition()) - Math.atan(Params.PIVOT_OFFSET/extenderLength);
             // Calculate extender floor distance from the pivot point.
             double extenderFloorDistanceFromPivot =
                 TrcUtil.magnitude(Params.PIVOT_OFFSET, extenderLength) * Math.cos(extenderAngleRadian);
@@ -136,6 +136,6 @@ public class Elbow
             return 0.0;
         }*/
         return 0.0;
-    }   //getElbowPowerComp
+    }   //getLinearSlidesPowerComp
 
-}   //class Elbow
+}   //class LinearSlides

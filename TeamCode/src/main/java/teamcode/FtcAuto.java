@@ -33,7 +33,9 @@ import ftclib.driverio.FtcMatchInfo;
 import ftclib.driverio.FtcMenu;
 import ftclib.driverio.FtcValueMenu;
 import ftclib.robotcore.FtcOpMode;
-import teamcode.autocommands.AutoV1;
+
+import teamcode.autocommands.SampleAuto;
+import teamcode.autocommands.SpecimenAuto;
 import trclib.command.CmdPidDrive;
 import trclib.command.CmdTimedDrive;
 import trclib.pathdrive.TrcPose2D;
@@ -55,18 +57,11 @@ public class FtcAuto extends FtcOpMode
         BLUE_ALLIANCE
     }   //enum Alliance
 
-    public enum StartPos
-    {
-        LEFT,
-        RIGHT
-    }   //enum StartPos
-
     public enum AutoStrategy
     {
-        AutoV1,
-        PID_DRIVE,
-        TIMED_DRIVE,
-        DO_NOTHING
+        SampleAuto,
+        SpecimenAuto,
+        TimedDrive
     }   //enum AutoStrategy
 
     /**
@@ -76,11 +71,7 @@ public class FtcAuto extends FtcOpMode
     {
         public double delay = 0.0;
         public Alliance alliance = Alliance.RED_ALLIANCE;
-        public StartPos startPos = StartPos.LEFT;
-        public AutoStrategy strategy = AutoStrategy.DO_NOTHING;
-        public double xTarget = 0.0;
-        public double yTarget = 0.0;
-        public double turnTarget = 0.0;
+        public AutoStrategy strategy = AutoStrategy.SampleAuto;
         public double driveTime = 0.0;
         public double drivePower = 0.0;
 
@@ -92,14 +83,10 @@ public class FtcAuto extends FtcOpMode
                 Locale.US,
                 "delay=%.0f " +
                 "alliance=\"%s\" " +
-                "startPos=\"%s\" " +
                 "strategy=\"%s\" " +
-                "xTarget=%.1f " +
-                "yTarget=%.1f " +
-                "turnTarget=%.0f " +
                 "driveTime=%.0f " +
                 "drivePower=%.1f",
-                delay, alliance, startPos, strategy, xTarget, yTarget, turnTarget, driveTime, drivePower);
+                delay, alliance, strategy, driveTime, drivePower);
         }   //toString
 
     }   //class AutoChoices
@@ -142,14 +129,7 @@ public class FtcAuto extends FtcOpMode
         //
         switch (autoChoices.strategy)
         {
-            case PID_DRIVE:
-                if (robot.robotDrive != null)
-                {
-                    autoCommand = new CmdPidDrive(robot.robotDrive.driveBase, robot.robotDrive.pidDrive);
-                }
-                break;
-
-            case TIMED_DRIVE:
+            case TimedDrive:
                 if (robot.robotDrive != null)
                 {
                     autoCommand = new CmdTimedDrive(
@@ -157,39 +137,22 @@ public class FtcAuto extends FtcOpMode
                         0.0, autoChoices.drivePower, 0.0);
                 }
                 break;
-            case AutoV1:
-                autoCommand = new AutoV1(robot, autoChoices);
-                robot.LClaw.setLogicalPosition(0.5);
-                robot.RClaw.setLogicalPosition(0);
+            case SampleAuto:
+                autoCommand = new SampleAuto(robot, autoChoices);
+                //robot.LClaw.setLogicalPosition(0.5);
+                //robot.RClaw.setLogicalPosition(0);
                 break;
-            case DO_NOTHING:
+            case SpecimenAuto:
+                autoCommand = new SpecimenAuto(robot, autoChoices);
+                //robot.LClaw.setLogicalPosition(0.5);
+                //robot.RClaw.setLogicalPosition(0);
+                break;
             default:
                 autoCommand = null;
                 break;
         }
 
-        if (robot.vision != null)
-        {
-            // Enabling vision early so we can detect target before match starts if necessary.
-            // Only enable the necessary vision for that purpose.
-//            if (robot.vision.aprilTagVision != null)
-//            {
-//                robot.globalTracer.traceInfo(moduleName, "Enabling AprilTagVision.");
-//                robot.vision.setAprilTagVisionEnabled(true);
-//            }
-//
-//            if (robot.vision.redBlobVision != null)
-//            {
-//                robot.globalTracer.traceInfo(moduleName, "Enabling RedBlobVision.");
-//                robot.vision.setRedBlobVisionEnabled(true);
-//            }
-//
-//            if (robot.vision.blueBlobVision != null)
-//            {
-//                robot.globalTracer.traceInfo(moduleName, "Enabling BlueBlobVision.");
-//                robot.vision.setBlueBlobVisionEnabled(true);
-//            }
-        }
+
 
         robot.zeroCalibrate();
     }   //robotInit
@@ -238,13 +201,6 @@ public class FtcAuto extends FtcOpMode
         if (robot.battery != null)
         {
             robot.battery.setEnabled(true);
-        }
-
-        if (autoChoices.strategy == AutoStrategy.PID_DRIVE && autoCommand != null)
-        {
-            ((CmdPidDrive) autoCommand).start(
-                autoChoices.delay, autoChoices.drivePower, null,
-                new TrcPose2D(autoChoices.xTarget*12.0, autoChoices.yTarget*12.0, autoChoices.turnTarget));
         }
     }   //startMode
 
@@ -319,15 +275,8 @@ public class FtcAuto extends FtcOpMode
 
         FtcValueMenu delayMenu = new FtcValueMenu("Delay time:", null, 0.0, 30.0, 1.0, 0.0, " %.0f sec");
         FtcChoiceMenu<Alliance> allianceMenu = new FtcChoiceMenu<>("Alliance:", delayMenu);
-        FtcChoiceMenu<StartPos> startPosMenu = new FtcChoiceMenu<>("Start Position:", allianceMenu);
-        FtcChoiceMenu<AutoStrategy> strategyMenu = new FtcChoiceMenu<>("Auto Strategies:", startPosMenu);
+        FtcChoiceMenu<AutoStrategy> strategyMenu = new FtcChoiceMenu<>("Auto Strategies:", allianceMenu);
 
-        FtcValueMenu xTargetMenu = new FtcValueMenu(
-            "xTarget:", strategyMenu, -12.0, 12.0, 0.5, 4.0, " %.1f ft");
-        FtcValueMenu yTargetMenu = new FtcValueMenu(
-            "yTarget:", xTargetMenu, -12.0, 12.0, 0.5, 4.0, " %.1f ft");
-        FtcValueMenu turnTargetMenu = new FtcValueMenu(
-            "turnTarget:", yTargetMenu, -180.0, 180.0, 5.0, 90.0, " %.0f deg");
         FtcValueMenu driveTimeMenu = new FtcValueMenu(
             "Drive time:", strategyMenu, 0.0, 30.0, 1.0, 5.0, " %.0f sec");
         FtcValueMenu drivePowerMenu = new FtcValueMenu(
@@ -335,24 +284,17 @@ public class FtcAuto extends FtcOpMode
 
         // Link Value Menus to their children.
         delayMenu.setChildMenu(allianceMenu);
-        xTargetMenu.setChildMenu(yTargetMenu);
-        yTargetMenu.setChildMenu(turnTargetMenu);
-        turnTargetMenu.setChildMenu(drivePowerMenu);
         driveTimeMenu.setChildMenu(drivePowerMenu);
         //
         // Populate choice menus.
         //
-        allianceMenu.addChoice("Red", Alliance.RED_ALLIANCE, true, startPosMenu);
-        allianceMenu.addChoice("Blue", Alliance.BLUE_ALLIANCE, false, startPosMenu);
+        allianceMenu.addChoice("Red", Alliance.RED_ALLIANCE, true, delayMenu);
+        allianceMenu.addChoice("Blue", Alliance.BLUE_ALLIANCE, false, delayMenu);
 
-        startPosMenu.addChoice("Start Position Left", StartPos.LEFT, true, strategyMenu);
-        startPosMenu.addChoice("Start Position Right", StartPos.RIGHT, false, strategyMenu);
+        strategyMenu.addChoice("Sample Auto", AutoStrategy.SampleAuto, false);
+        strategyMenu.addChoice("Specimen Auto", AutoStrategy.SpecimenAuto, false);
 
-        strategyMenu.addChoice("PID Drive", AutoStrategy.PID_DRIVE, false, xTargetMenu);
-        strategyMenu.addChoice("Auto V1", AutoStrategy.AutoV1, false);
-
-        strategyMenu.addChoice("Timed Drive", AutoStrategy.TIMED_DRIVE, false, driveTimeMenu);
-        strategyMenu.addChoice("Do nothing", AutoStrategy.DO_NOTHING, true);
+        strategyMenu.addChoice("Timed Drive", AutoStrategy.TimedDrive, false, driveTimeMenu);
         //
         // Traverse menus.
         //
@@ -362,11 +304,7 @@ public class FtcAuto extends FtcOpMode
         //
         autoChoices.delay = delayMenu.getCurrentValue();
         autoChoices.alliance = allianceMenu.getCurrentChoiceObject();
-        autoChoices.startPos = startPosMenu.getCurrentChoiceObject();
         autoChoices.strategy = strategyMenu.getCurrentChoiceObject();
-        autoChoices.xTarget = xTargetMenu.getCurrentValue();
-        autoChoices.yTarget = yTargetMenu.getCurrentValue();
-        autoChoices.turnTarget = turnTargetMenu.getCurrentValue();
         autoChoices.driveTime = driveTimeMenu.getCurrentValue();
         autoChoices.drivePower = drivePowerMenu.getCurrentValue();
         //

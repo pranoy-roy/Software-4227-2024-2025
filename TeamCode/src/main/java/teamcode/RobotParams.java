@@ -154,7 +154,7 @@ public class RobotParams
         public static final boolean useBlinkinLED               = false;
         public static final boolean useGobildaLED               = false;
         // Vision
-        public static final boolean useVision                   = true;
+        public static final boolean useVision                   = false;
         public static final boolean useWebCam                   = true;    // false to use Android phone camera.
         public static final boolean useBuiltinCamBack           = false;    // For Android Phone as Robot Controller.
         public static final boolean tuneColorBlobVision         = false;
@@ -211,7 +211,7 @@ public class RobotParams
     /**
      * This class contains the parameters of the back camera.
      */
-    public static class BackCamParams extends FtcRobotDrive.VisionInfo
+    /*public static class BackCamParams extends FtcRobotDrive.VisionInfo
     {
         public BackCamParams()
         {
@@ -238,7 +238,7 @@ public class RobotParams
                 -2.5625, 21.0 - Robot.ROBOT_LENGTH/2.0 - camYOffset,    // World Bottom Left
                 2.5626, 21.0 - Robot.ROBOT_LENGTH/2.0 - camYOffset);    // World Bottom Right
         }   //BackCamParams
-    }   //class BackCamParams
+    }*/   //class BackCamParams
 
     /**
      * This class contains the parameters of the Limelight vision processor.
@@ -279,7 +279,6 @@ public class RobotParams
         {
             robotName = "VisionOnly";
             webCam1 = new FrontCamParams();
-            webCam2 = new BackCamParams();
             limelight = new LimelightParams();
         }   //VisionOnlyParams
     }   //class VisionOnlyParams
@@ -368,7 +367,6 @@ public class RobotParams
             velPidCoeffs = new PidCoefficients(0.0, 0.0, 0.0, 1.0 / profiledMaxVelocity, 0.0);
             // Vision
             webCam1 = new FrontCamParams();
-            webCam2 = new BackCamParams();
             limelight = new LimelightParams();
             // Miscellaneous
             indicatorName = "blinkin";
@@ -445,25 +443,24 @@ public class RobotParams
             profiledMaxAcceleration = robotMaxAcceleration;
             profiledMaxTurnRate = robotMaxTurnRate;
             // DriveBase PID Parameters
-            drivePidTolerance = 1.0;
-            turnPidTolerance = 1.0;
-            xDrivePidCoeffs = new PidCoefficients(0.95, 0.0, 0.001, 0.0, 0.0);
+            drivePidTolerance = 0.5;
+            turnPidTolerance = 1;
+            xDrivePidCoeffs = new PidCoefficients(0.075, 0.0, 0.00, 0.0, 0.0);
             xDrivePidPowerLimit = 1.0;
             xDriveMaxPidRampRate = null;
-            yDrivePidCoeffs = new PidCoefficients(0.06, 0.0, 0.002, 0.0, 0.0);
+            yDrivePidCoeffs = new PidCoefficients(0.075, 0.0, 0.00, 0.0, 0.0);
             yDrivePidPowerLimit = 1.0;
             yDriveMaxPidRampRate = null;
-            turnPidCoeffs = new PidCoefficients(0.0275, 0.0, 0.002, 0.0, 0.0);
+            turnPidCoeffs = new PidCoefficients(0.001, 0.0, 0.00, 0.0, 0.0);
             turnPidPowerLimit = 0.5;
             turnMaxPidRampRate = null;
             // PID Stall Detection
             pidStallDetectionEnabled = true;
             // PurePursuit Parameters
-            ppdFollowingDistance = 6.0;
+            ppdFollowingDistance = 60.0;
             velPidCoeffs = new PidCoefficients(0.0, 0.0, 0.0, 1.0 / profiledMaxVelocity, 0.0);
             // Vision
             webCam1 = new FrontCamParams();
-            webCam2 = new BackCamParams();
             limelight = new LimelightParams();
             // Miscellaneous
             indicatorName = "blinkin";
@@ -542,10 +539,10 @@ public class RobotParams
             // DriveBase PID Parameters
             drivePidTolerance = 1.0;
             turnPidTolerance = 1.0;
-            xDrivePidCoeffs = yDrivePidCoeffs = new PidCoefficients(0.95, 0.0, 0.001, 0.0, 0.0);
+            xDrivePidCoeffs = yDrivePidCoeffs = new PidCoefficients(0.05, 0.0, 0.002, 0.0, 0.0);
             xDrivePidPowerLimit = yDrivePidPowerLimit = 1.0;
             xDriveMaxPidRampRate = yDriveMaxPidRampRate = null;
-            turnPidCoeffs = new PidCoefficients(0.02, 0.0, 0.002, 0.0, 0.0);
+            turnPidCoeffs = new PidCoefficients(0.0275, 0.0, 0.002, 0.0, 0.0);
             turnPidPowerLimit = 0.5;
             turnMaxPidRampRate = null;
             // PID Stall Detection
@@ -555,7 +552,6 @@ public class RobotParams
             velPidCoeffs = new PidCoefficients(0.0, 0.0, 0.0, 1.0 / profiledMaxVelocity, 0.0);
             // Vision
             webCam1 = new FrontCamParams();
-            webCam2 = new BackCamParams();
             limelight = new LimelightParams();
             // Miscellaneous
             indicatorName = "blinkin";

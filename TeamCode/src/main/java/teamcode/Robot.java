@@ -30,11 +30,10 @@ import ftclib.driverio.FtcMatchInfo;
 import ftclib.motor.FtcDcMotor;
 import ftclib.motor.FtcServo;
 import ftclib.robotcore.FtcOpMode;
+import ftclib.sensor.FtcDistanceSensor;
 import ftclib.sensor.FtcRobotBattery;
-import teamcode.subsystems.Elbow;
 import teamcode.subsystems.LEDIndicator;
 import teamcode.subsystems.RobotBase;
-import teamcode.vision.Vision;
 import trclib.motor.TrcMotor;
 import trclib.motor.TrcServo;
 import trclib.pathdrive.TrcPose2D;
@@ -42,8 +41,10 @@ import trclib.robotcore.TrcDbgTrace;
 import trclib.robotcore.TrcRobot;
 import trclib.sensor.TrcDigitalInput;
 import trclib.timer.TrcTimer;
+
+import teamcode.subsystems.LinearSlides;
 import teamcode.subsystems.Shoulder;
-import trclib.pathdrive.TrcPidDrive;
+import teamcode.vision.Vision;
 
 /**
  * This class creates the robot object that consists of sensors, indicators, drive base and all the subsystems.
@@ -61,20 +62,25 @@ public class Robot
     // Robot Drive.
     public FtcRobotDrive.RobotInfo robotInfo;
     public FtcRobotDrive robotDrive;
-    public TrcPidDrive pidDrive;
+    public FtcDistanceSensor rightX;
+    public FtcDistanceSensor leftX;
+    public FtcDistanceSensor frontY;
+    public FtcDistanceSensor backY;
+    public Vision vision;
+    public TrcMotor linearSlides;
+    public TrcMotor shoulder;
+    //public FtcServo LClaw;
+    //public FtcServo RClaw;
+    //public FtcServo wrist;
+    public FtcDcMotor lowerWinch;
+    public FtcDcMotor higherWinch;
+
 
     // Vision subsystems.
-    public Vision vision;
     // Sensors and indicators.
     public LEDIndicator ledIndicator;
     public FtcRobotBattery battery;
     // Subsystems
-    public TrcMotor elbow;
-    public TrcMotor shoulder;
-    public FtcServo LClaw;
-    public FtcServo RClaw;
-    public FtcDcMotor lowerWinch;
-    public FtcDcMotor higherWinch;
     /**
      * Constructor: Create an instance of the object.
      *
@@ -121,16 +127,22 @@ public class Robot
             //
             if (RobotParams.Preferences.useSubsystems)
             {
-                elbow = new Elbow(this).getMotor();
+                linearSlides = new LinearSlides(this).getMotor();
                 shoulder = new Shoulder(this).getMotor();
-                LClaw = new FtcServo("Lclaw");
-                RClaw = new FtcServo("Rclaw");
+                //LClaw = new FtcServo("LClaw");
+                //RClaw = new FtcServo("RClaw");
+                //wrist = new FtcServo("wrist");
                 lowerWinch = new FtcDcMotor("lowerWinch");
                 higherWinch = new FtcDcMotor("higherWinch");
+                rightX = new FtcDistanceSensor("rightX");
+                leftX = new FtcDistanceSensor("leftX");
+                frontY = new FtcDistanceSensor("frontY");
+                backY = new FtcDistanceSensor("backY");
             }
         }
         speak("Init complete");
     }   //Robot
+
 
     /**
      * This method returns the instance name.
@@ -244,7 +256,7 @@ public class Robot
             }
 
             vision.close();
-       }
+        }
 
         if (robotDrive != null)
         {
