@@ -154,9 +154,13 @@ public class SpecimenAuto implements TrcRobot.RobotCommand
                 case START:
                     if (autoChoices.delay > 0.0) {
                         timer.set(autoChoices.delay, event);
+                        //robot.LClaw.setLogicalPosition(0.5);
+                        //robot.RClaw.setLogicalPosition(0);
                         SM.waitForSingleEvent(event, State.MOVE_TO_SPECIMEN_SCORE_POSE);
                     }
                     else {
+                        //robot.LClaw.setLogicalPosition(0.5);
+                        //robot.RClaw.setLogicalPosition(0);
                         SM.setState(State.MOVE_TO_SPECIMEN_SCORE_POSE);
                     }
                     break;
